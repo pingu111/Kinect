@@ -65,7 +65,10 @@ public class BodyState : MonoBehaviour
                 EventManager.raise(MyEventTypes.STATE_CHANGED, currentState);
             }
 
-            //
+            //  State of orientations
+
+            CurrentHandOrientation previewOrientationState = currentHandOr;
+
         }
 	}
 
@@ -99,8 +102,6 @@ public class BodyState : MonoBehaviour
     {
         return (leftHand.transform.position.y > leftShoulder.transform.position.y);
     }
-
-
 }
 
 public enum CurrentState
