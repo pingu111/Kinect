@@ -4,21 +4,25 @@ using UnityEngine;
 using System.Collections.Generic;
 using Kinect = Windows.Kinect;
 
-public class Movement : MonoBehaviour
+namespace EnumJoint
 {
-
-    List<Vector3> listPosition = new List<Vector3>();
-
     public enum jointType
     {
         SpineBase, SpineMid, Neck, Head, ShoulderLeft, ElbowLeft, WristLeft,
-        HandLeft, ShoulderRight, ElbowRight, WristRight, HandRight, HipLeft, KneeLeft,
-        AnkleLeft, FootLeft, HipRight, KneeRight, AnkleRight, FootRight, SpineShoulder,
-        HandTipLeft, ThumbLeft, HandTipRight, ThumbRight
+        HandLeft, ShoulderRight, ElbowRight, WristRight, HandRight, HipLeft,
+        KneeLeft,AnkleLeft, FootLeft, HipRight, KneeRight, AnkleRight, FootRight,
+        SpineShoulder, HandTipLeft, ThumbLeft, HandTipRight, ThumbRight
     };
-    public jointType joint;
+}
+
+public class Movement : MonoBehaviour
+{
+    List<Vector3> listPosition = new List<Vector3>();
+
+    public EnumJoint.jointType joint;
 
     public GameObject BodySourceManager;
+
     private BodySourceManager _BodyManager;
 
     // Use this for initialization

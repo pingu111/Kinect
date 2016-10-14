@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using Windows.Kinect;
 
+
 public class BodySourceManager : MonoBehaviour
 {
     private KinectSensor _Sensor;
