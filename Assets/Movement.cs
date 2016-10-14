@@ -55,8 +55,8 @@ public class Movement : MonoBehaviour
         {
             if (body.IsTracked)
             {
-                Vector3 handPosition = GetVector3FromJoint(body.Joints[Kinect.JointType.SpineBase + (int)joint]);
-                this.gameObject.transform.position = handPosition;
+                Vector3 partPosition = GetVector3FromJoint(body.Joints[Kinect.JointType.SpineBase + (int)joint]);
+                this.gameObject.transform.position = partPosition;
                 listPosition.Add(this.gameObject.transform.position);
             }
         }

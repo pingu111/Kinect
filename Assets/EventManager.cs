@@ -7,15 +7,7 @@ using UnityEngine;
 /// </summary>
 public enum MyEventTypes
 {
-    SPIKEIN,
-    SPIKEOUT,
-    GROUPSPIKEOUT,
-    GROUPSPIKEIN,
-    ONVICTORY,
-    ONLOSE,
-    SCOREADD,
-    TEXTCHANGE,
-    PLATFORMHIDEN
+    
 }
 
 public delegate void Callback();
