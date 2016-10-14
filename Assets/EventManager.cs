@@ -7,7 +7,8 @@ using UnityEngine;
 /// </summary>
 public enum MyEventTypes
 {
-    
+    STATE_CHANGED,
+    ORIENTATION_STATE_CHANGED
 }
 
 public delegate void Callback();

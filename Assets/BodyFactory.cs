@@ -36,6 +36,12 @@ public class BodyFactory : MonoBehaviour
                 case jointType.SpineMid:
                     this.gameObject.GetComponent<BodyState>().middleBody = part;
                     break;
+                case jointType.WristLeft:
+                    this.gameObject.GetComponent<BodyState>().leftWrist = part;
+                    break;
+                case jointType.WristRight:
+                    this.gameObject.GetComponent<BodyState>().rightWrist = part;
+                    break;
                 default:
                     break;
             }

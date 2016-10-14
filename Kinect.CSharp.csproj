@@ -75,6 +75,12 @@
     <Compile Include="Assets\BodyFactory.cs" />
     <Compile Include="Assets\BodyState.cs" />
     <Compile Include="Assets\EventManager.cs" />
+    <Compile Include="Assets\Gestes\Geste.cs" />
+    <Compile Include="Assets\Gestes\ParlesAMaMain.cs" />
+    <Compile Include="Assets\Gestes\PeauDeLapin.cs" />
+    <Compile Include="Assets\Gestes\Run.cs" />
+    <Compile Include="Assets\Gestes\SwipeDroite.cs" />
+    <Compile Include="Assets\Gestes\SwipeGauche.cs" />
     <Compile Include="Assets\KinectView\Scripts\BodySourceManager.cs" />
     <Compile Include="Assets\KinectView\Scripts\BodySourceView.cs" />
     <Compile Include="Assets\KinectView\Scripts\ColorSourceManager.cs" />
