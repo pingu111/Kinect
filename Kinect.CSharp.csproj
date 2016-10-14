@@ -72,8 +72,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\GreenScreen\Scripts\CoordinateMapperManager.cs" />
-    <Compile Include="Assets\GreenScreen\Scripts\CoordinateMapperView.cs" />
+    <Compile Include="Assets\BodyFactory.cs" />
+    <Compile Include="Assets\BodyState.cs" />
+    <Compile Include="Assets\EventManager.cs" />
     <Compile Include="Assets\KinectView\Scripts\BodySourceManager.cs" />
     <Compile Include="Assets\KinectView\Scripts\BodySourceView.cs" />
     <Compile Include="Assets\KinectView\Scripts\ColorSourceManager.cs" />
@@ -87,7 +88,6 @@
     <Compile Include="Assets\Movement.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\GreenScreen\Materials\GreenScreenShader.shader" />
     <None Include="Assets\Plugins\x86\NuiDatabase\Expression\NuiExpressionModelManifest.txt" />
     <None Include="Assets\Plugins\x86\NuiDatabase\HDFaceTracker\AAMModel\Map2D3D_F.txt" />
     <None Include="Assets\Plugins\x86\NuiDatabase\HDFaceTracker\AAMModel\Map2D3D_HLP.txt" />
