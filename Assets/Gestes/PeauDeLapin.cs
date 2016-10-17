@@ -4,23 +4,11 @@ using System;
 
 public class PeauDeLapin : Geste
 {
-    public override void GesteDetected()
+    protected override void OnStart()
     {
-        throw new NotImplementedException();
+        mType = GesteTypes.HANDS_UP;
+        statePath.Add(CurrentState.IDLE);
+        statePath.Add(CurrentState.HANDSUP);
+        statePath.Add(CurrentState.IDLE);
     }
-
-    public override void OnStateChange()
-    {
-        throw new NotImplementedException();
-    }
-
-    // Use this for initialization
-    void Start () {
-	
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
 }

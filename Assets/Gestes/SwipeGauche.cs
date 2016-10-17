@@ -4,23 +4,11 @@ using System;
 
 public class SwipeGauche : Geste
 {
-    public override void GesteDetected()
+    protected override void OnStart()
     {
-        throw new NotImplementedException();
+        mType = GesteTypes.SWIPE_LEFT_WITH_RIGHT_HAND;
+        statePath.Add(CurrentState.IDLE);
+        statePath.Add(CurrentState.RIGHT_HAND_LEFT);
+        statePath.Add(CurrentState.IDLE);
     }
-
-    public override void OnStateChange()
-    {
-        throw new NotImplementedException();
-    }
-
-    // Use this for initialization
-    void Start () {
-	
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
 }

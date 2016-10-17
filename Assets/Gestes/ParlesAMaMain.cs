@@ -1,28 +1,15 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System;
+using System.Collections.Generic;
 
 public class ParlesAMaMain : Geste
-{
-    public override void GesteDetected()
+{ 
+    protected override void OnStart ()
     {
-        throw new NotImplementedException();
+        mType = GesteTypes.SPEAK_TO_THE_HAND;
+        statePath.Add(CurrentState.IDLE);
+        statePath.Add(CurrentState.RIGHT_HAND_FRONT);
+        statePath.Add(CurrentState.IDLE);
     }
-
-    public override void OnStateChange()
-    {
-        throw new NotImplementedException();
-    }
-
-
-
-    // Use this for initialization
-    void Start () {
-	
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
 }
