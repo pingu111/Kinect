@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
+using System.Reflection;
 
 public class BodyState : MonoBehaviour
 {
@@ -19,18 +21,35 @@ public class BodyState : MonoBehaviour
 
     public GameObject middleBody;
 
-    private CurrentHandOrientation currentHandOr;
+    private CurrentState _currentHandOr;
+    private CurrentState CurrentHandOr
+    {
+        get { return _currentHandOr; }
+        set
+        {
+            if(TypoeOfStateEnum.GetTypoeOfStateValue(value).Equals(TypeOfState.HAND_ORIENTATION))
+                _currentHandOr = value;
+        }
+    }
 
-    private CurrentState currentState;
-
+    private CurrentState _currentStateBody;
+    private CurrentState CurrentStateBody
+    {
+        get { return _currentStateBody; }
+        set
+        {
+            if (TypoeOfStateEnum.GetTypoeOfStateValue(value).Equals(TypeOfState.HAND_ORIENTATION))
+                _currentStateBody = value;
+        }
+    }
 
     private float distanceShoulders;
     private int nbMeasuresShoulders = 0;
 
     void Start()
     {
-        currentHandOr = CurrentHandOrientation.IDLE;
-        currentState = CurrentState.IDLE;
+        CurrentHandOr = CurrentState.IDLE_HAND;
+        CurrentStateBody = CurrentState.IDLE_BODY;
     }
 
 	// Update is called once per frame
@@ -44,7 +63,7 @@ public class BodyState : MonoBehaviour
 
 
             // State of the positions
-            CurrentState previewState = currentState;
+            CurrentState previewState = CurrentStateBody;
 
             if (isRightHandRight())
                 previewState = CurrentState.RIGHT_HAND_RIGHT;
@@ -57,15 +76,16 @@ public class BodyState : MonoBehaviour
             else if (isLeftHandFront())
                 previewState = CurrentState.LEFT_HAND_FRONT;
             else
-                previewState = CurrentState.IDLE;
+                previewState = CurrentState.IDLE_BODY;
 
-            if(previewState != currentState)
+            if(previewState != CurrentStateBody)
             {
-                currentState = previewState;
-                EventManager.raise(MyEventTypes.STATE_CHANGED, currentState);
+                CurrentStateBody = previewState;
+                EventManager.raise(MyEventTypes.STATE_CHANGED, CurrentStateBody);
             }
 
-            //
+            //  State of orientations
+            CurrentState previewOrientationState = CurrentHandOr;
         }
 	}
 
@@ -99,26 +119,74 @@ public class BodyState : MonoBehaviour
     {
         return (leftHand.transform.position.y > leftShoulder.transform.position.y);
     }
+}
 
 
+
+public class TypeOfStateValue : System.Attribute
+{
+    private readonly TypeOfState _value;
+
+    public TypeOfStateValue(TypeOfState value)
+    {
+        _value = value;
+    }
+
+    public TypeOfState value
+    {
+        get { return _value; }
+    }
+
+}
+
+
+public static class TypoeOfStateEnum
+{
+    public static TypeOfState GetTypoeOfStateValue(Enum value)
+    {
+        TypeOfState output = 0;
+        Type type = value.GetType();
+
+        FieldInfo fi = type.GetField(value.ToString());
+
+        TypeOfStateValue[] attrs =
+           fi.GetCustomAttributes(typeof(TypeOfStateValue),
+                                   false) as TypeOfStateValue[];
+        if (attrs.Length > 0)
+        {
+            output = attrs[0].value;
+        }
+
+        return output;
+    }
+}
+
+public enum TypeOfState
+{
+    HAND_ORIENTATION,
+    BODY_STATE
 }
 
 public enum CurrentState
 {
-    IDLE,
-
+    [TypeOfStateValue(TypeOfState.BODY_STATE)]
+    IDLE_BODY,
+    [TypeOfStateValue(TypeOfState.BODY_STATE)]
     RIGHT_HAND_FRONT,
+    [TypeOfStateValue(TypeOfState.BODY_STATE)]
     LEFT_HAND_FRONT,
-
+    [TypeOfStateValue(TypeOfState.BODY_STATE)]
     RIGHT_HAND_RIGHT,
+    [TypeOfStateValue(TypeOfState.BODY_STATE)]
     RIGHT_HAND_LEFT,
+    [TypeOfStateValue(TypeOfState.BODY_STATE)]
+    HANDSUP,
 
-    HANDSUP
-}
-
-public enum CurrentHandOrientation
-{
-    IDLE,
+    [TypeOfStateValue(TypeOfState.HAND_ORIENTATION)]
+    IDLE_HAND,
+    [TypeOfStateValue(TypeOfState.HAND_ORIENTATION)]
     RIGHT_HAND_ORIENTATION_LEFT,
+    [TypeOfStateValue(TypeOfState.HAND_ORIENTATION)]
     RIGHT_HAND_ORIENTATION_RIGHT
 }
+
