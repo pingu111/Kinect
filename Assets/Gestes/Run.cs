@@ -8,8 +8,8 @@ public class Run : Geste
     {
         throw new NotImplementedException();
         mType = GesteTypes.RUN;
-        statePath.Add(CurrentState.IDLE);
+        statePath.Add(CurrentState.IDLE_BODY);
         statePath.Add(CurrentState.HANDSUP);
-        statePath.Add(CurrentState.IDLE);
+        statePath.Add(CurrentState.IDLE_BODY);
     }
 }

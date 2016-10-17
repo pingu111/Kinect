@@ -45,5 +45,6 @@ public enum GesteTypes
     HANDS_UP,
     SWIPE_LEFT_WITH_RIGHT_HAND,
     SWIPE_RIGHT_WITH_RIGHT_HAND,
-    RUN
+    RUN,
+    HI
 }
