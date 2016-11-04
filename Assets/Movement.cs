@@ -8,10 +8,9 @@ namespace EnumJoint
 {
     public enum jointType
     {
-        SpineBase, SpineMid, Neck, Head, ShoulderLeft, ElbowLeft, WristLeft,
+        SpineBase, SpineMid,  Head, ShoulderLeft, ElbowLeft, WristLeft,
         HandLeft, ShoulderRight, ElbowRight, WristRight, HandRight, HipLeft,
-        KneeLeft,AnkleLeft, FootLeft, HipRight, KneeRight, AnkleRight, FootRight,
-        SpineShoulder, HandTipLeft, ThumbLeft, HandTipRight, ThumbRight
+        HipRight, SpineShoulder, HandTipLeft, ThumbLeft, HandTipRight, ThumbRight
     };
 }
 

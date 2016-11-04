@@ -4,6 +4,8 @@ using UnityEngine.UI;
 
 public class GesteText : MonoBehaviour {
 
+    public GameObject knobTest;
+
     void Start()
     {
         this.gameObject.GetComponent<Text>().text = "";
@@ -36,6 +38,12 @@ public class GesteText : MonoBehaviour {
             default:
                 break;
         }
+
         this.gameObject.GetComponent<Text>().text = (newText + " Detecté !");
+
+        GameObject copy;
+        copy = Instantiate(knobTest);
+        copy.SetActive(true);
+        Destroy(copy, 0.1f);
     }
 }

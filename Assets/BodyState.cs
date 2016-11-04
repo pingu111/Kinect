@@ -63,9 +63,12 @@ public class BodyState : MonoBehaviour
 	    if(rightHand != null && leftHand != null && rightShoulder != null && leftShoulder != null && middleBody != null)
         {
             // We increase the number of measures of this distance
-            nbMeasuresShoulders++;
-            distanceShoulders = (distanceShoulders*(nbMeasuresShoulders - 1) + Vector3.Distance(rightShoulder.transform.position, leftShoulder.transform.position))/ (nbMeasuresShoulders);
-
+            if(Vector3.Distance(rightShoulder.transform.position, leftShoulder.transform.position) > 0)
+            {
+                distanceShoulders = Vector3.Distance(rightShoulder.transform.position, leftShoulder.transform.position);
+                /*nbMeasuresShoulders++;
+                distanceShoulders = (distanceShoulders * (nbMeasuresShoulders - 1) + Vector3.Distance(rightShoulder.transform.position, leftShoulder.transform.position)) / (nbMeasuresShoulders);*/
+            }
 
             // State of the positions
             CurrentState previewState = CurrentStateBody;
