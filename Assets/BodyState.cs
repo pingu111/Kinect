@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 using System;
 using System.Reflection;
 
@@ -38,7 +38,7 @@ public class BodyState : MonoBehaviour
         get { return _currentStateBody; }
         set
         {
-            if (TypoeOfStateEnum.GetTypoeOfStateValue(value).Equals(TypeOfState.HAND_ORIENTATION))
+            if (TypoeOfStateEnum.GetTypoeOfStateValue(value).Equals(TypeOfState.BODY_STATE))
                 _currentStateBody = value;
         }
     }
@@ -46,8 +46,13 @@ public class BodyState : MonoBehaviour
     private float distanceShoulders;
     private int nbMeasuresShoulders = 0;
 
+
+    public List<Geste> listGestes;
+
+
     void Start()
     {
+        listGestes = new List<Geste>{new ParlesAMaMain(), new PeauDeLapin(), new Run(), new Salut(), new SwipeDroite(), new SwipeGauche()};
         CurrentHandOr = CurrentState.IDLE_HAND;
         CurrentStateBody = CurrentState.IDLE_BODY;
     }
@@ -59,26 +64,45 @@ public class BodyState : MonoBehaviour
         {
             // We increase the number of measures of this distance
             nbMeasuresShoulders++;
-            distanceShoulders = (distanceShoulders*(nbMeasuresShoulders - 1)+  Vector3.Distance(rightShoulder.transform.position, leftShoulder.transform.position))/ (nbMeasuresShoulders);
+            distanceShoulders = (distanceShoulders*(nbMeasuresShoulders - 1) + Vector3.Distance(rightShoulder.transform.position, leftShoulder.transform.position))/ (nbMeasuresShoulders);
 
 
             // State of the positions
             CurrentState previewState = CurrentStateBody;
 
             if (isRightHandRight())
+            {
                 previewState = CurrentState.RIGHT_HAND_RIGHT;
+                Debug.Log(previewState + " car " + isRightHandRight());
+            }
             else if (isRightHandLeft())
+            {
                 previewState = CurrentState.RIGHT_HAND_LEFT;
+                Debug.Log(previewState + " car " + isRightHandLeft());
+            }
             else if (isLeftHandUp() && isRightHandUp())
+            {
                 previewState = CurrentState.HANDSUP;
+                Debug.Log(previewState + " car " + isLeftHandUp() +" "+ isRightHandUp());
+            }
             else if (isRightHandFront())
+            {
                 previewState = CurrentState.RIGHT_HAND_FRONT;
+                Debug.Log(previewState + " car " + isRightHandFront() );
+            }
             else if (isLeftHandFront())
+            {
                 previewState = CurrentState.LEFT_HAND_FRONT;
+                Debug.Log(previewState + " car " + isLeftHandFront());
+            }
             else
+            {
                 previewState = CurrentState.IDLE_BODY;
+                Debug.Log(previewState);
 
-            if(previewState != CurrentStateBody)
+            }
+
+            if (previewState != CurrentStateBody)
             {
                 CurrentStateBody = previewState;
                 EventManager.raise(MyEventTypes.STATE_CHANGED, CurrentStateBody);

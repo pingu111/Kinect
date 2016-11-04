@@ -4,6 +4,10 @@ using System;
 
 public class Run : Geste
 {
+    public Run() : base()
+    {
+    }
+
     protected override void OnStart()
     {
         mType = GesteTypes.RUN;

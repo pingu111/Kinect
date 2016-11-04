@@ -4,6 +4,10 @@ using System;
 
 public class PeauDeLapin : Geste
 {
+    public PeauDeLapin() : base()
+    {
+    }
+
     protected override void OnStart()
     {
         mType = GesteTypes.HANDS_UP;

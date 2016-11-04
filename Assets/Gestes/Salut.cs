@@ -3,6 +3,11 @@ using System.Collections;
 using System;
 
 public class Salut : Geste {
+
+    public Salut() : base()
+    {
+    }
+
     protected override void OnStart()
     {
         mType = GesteTypes.HI;

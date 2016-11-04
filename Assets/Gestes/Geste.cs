@@ -28,7 +28,7 @@ public abstract class Geste
         if (newState == statePath[currentPositionInPath + 1].First)
         {
             currentPositionInPath++;
-            if (currentPositionInPath == statePath.Count)
+            if (currentPositionInPath == statePath.Count-1)
             {
                 currentPositionInPath = 0;
                 GesteDetected();
@@ -37,7 +37,7 @@ public abstract class Geste
         else if (!statePath[currentPositionInPath + 1].Second)
         {
             currentPositionInPath++;
-            if (currentPositionInPath == statePath.Count)
+            if (currentPositionInPath == statePath.Count-1)
             {
                 currentPositionInPath = 0;
                 GesteDetected();
@@ -54,12 +54,13 @@ public abstract class Geste
 
     private void GesteDetected()
     {
+        Debug.Log("Raise " + mType);
         EventManager.raise<GesteTypes>(MyEventTypes.GESTE_DETECTED, mType);
     }
 
     protected abstract void OnStart();
 
-    void Start()
+    protected Geste()
     {
         EventManager.addActionToEvent<CurrentState>(MyEventTypes.STATE_CHANGED, OnStateChange);
         OnStart();

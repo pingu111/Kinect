@@ -4,6 +4,10 @@ using System;
 
 public class SwipeGauche : Geste
 {
+    public SwipeGauche() : base()
+    {
+    }
+
     protected override void OnStart()
     {
         mType = GesteTypes.SWIPE_LEFT_WITH_RIGHT_HAND;
