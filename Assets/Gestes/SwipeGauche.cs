@@ -7,8 +7,8 @@ public class SwipeGauche : Geste
     protected override void OnStart()
     {
         mType = GesteTypes.SWIPE_LEFT_WITH_RIGHT_HAND;
-        statePath.Add(CurrentState.IDLE_BODY);
-        statePath.Add(CurrentState.RIGHT_HAND_LEFT);
-        statePath.Add(CurrentState.IDLE_BODY);
+        AddStateToPath(CurrentState.IDLE_BODY);
+        AddStateToPath(CurrentState.RIGHT_HAND_LEFT);
+        AddStateToPath(CurrentState.IDLE_BODY);
     }
 }

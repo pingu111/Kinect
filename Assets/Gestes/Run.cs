@@ -6,10 +6,10 @@ public class Run : Geste
 {
     protected override void OnStart()
     {
-        throw new NotImplementedException();
         mType = GesteTypes.RUN;
-        statePath.Add(CurrentState.IDLE_BODY);
-        statePath.Add(CurrentState.HANDSUP);
-        statePath.Add(CurrentState.IDLE_BODY);
+        AddStateToPath(CurrentState.IDLE_BODY);
+        AddStateToPath(CurrentState.LEFT_HAND_FRONT);
+        AddStateToPath(CurrentState.RIGHT_HAND_FRONT);
+        AddStateToPath(CurrentState.LEFT_HAND_FRONT);
     }
 }

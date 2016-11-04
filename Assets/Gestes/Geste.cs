@@ -2,15 +2,30 @@
 using System.Collections;
 using System.Collections.Generic;
 
+/// <summary>
+/// pour la creation de tout nouveaux gestes :
+/// creer la méthode OnStart et y informer le type dans mType
+/// puis ajouter les differents etats avec AddStateToPath
+/// </summary>
 public abstract class Geste
 {
     protected GesteTypes mType;
     private int currentPositionInPath = -1;
-    protected List<CurrentState> statePath = new List<CurrentState>();
+    private List<Pair<CurrentState,bool>> statePath = new List<Pair<CurrentState,bool>>();
+
+    protected void AddStateToPath(CurrentState state)
+    {
+        AddStateToPath(state, true);
+    }
+
+    protected void AddStateToPath(CurrentState state, bool isImportantState)
+    {
+        statePath.Add(new Pair<CurrentState,bool>(state,isImportantState));
+    }
 
     void OnStateChange(CurrentState newState)
     {
-        if (newState == statePath[currentPositionInPath + 1])
+        if (newState == statePath[currentPositionInPath + 1].First)
         {
             currentPositionInPath++;
             if (currentPositionInPath == statePath.Count)
@@ -18,6 +33,18 @@ public abstract class Geste
                 currentPositionInPath = 0;
                 GesteDetected();
             }
+        }
+        else if (!statePath[currentPositionInPath + 1].Second)
+        {
+            currentPositionInPath++;
+            if (currentPositionInPath == statePath.Count)
+            {
+                currentPositionInPath = 0;
+                GesteDetected();
+                return;
+            }
+            OnStateChange(newState);
+            return;
         }
         else
         {
@@ -38,6 +65,8 @@ public abstract class Geste
         OnStart();
     }
 }
+
+
 
 public enum GesteTypes
 {

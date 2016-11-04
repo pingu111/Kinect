@@ -7,8 +7,8 @@ public class PeauDeLapin : Geste
     protected override void OnStart()
     {
         mType = GesteTypes.HANDS_UP;
-        statePath.Add(CurrentState.IDLE_BODY);
-        statePath.Add(CurrentState.HANDSUP);
-        statePath.Add(CurrentState.IDLE_BODY);
+        AddStateToPath(CurrentState.IDLE_BODY);
+        AddStateToPath(CurrentState.HANDSUP);
+        AddStateToPath(CurrentState.IDLE_BODY);
     }
 }
