@@ -41,9 +41,12 @@ public class GesteText : MonoBehaviour {
 
         this.gameObject.GetComponent<Text>().text = (newText + " Detecté !");
 
-        GameObject copy;
-        copy = Instantiate(knobTest);
-        copy.SetActive(true);
-        Destroy(copy, 0.1f);
+        knobTest.SetActive(true);
+        Invoke("hide", 0.2f);
+    }
+
+    void hide()
+    {
+        knobTest.SetActive(false);
     }
 }

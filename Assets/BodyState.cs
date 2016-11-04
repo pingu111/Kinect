@@ -42,8 +42,8 @@ public class BodyState : MonoBehaviour
                 _currentStateBody = value;
         }
     }
-
-    private float distanceShoulders;
+    private bool measureHasBeenDone = false;
+    private float distanceShoulders = 0;
     private int nbMeasuresShoulders = 0;
 
 
@@ -62,57 +62,61 @@ public class BodyState : MonoBehaviour
     {
 	    if(rightHand != null && leftHand != null && rightShoulder != null && leftShoulder != null && middleBody != null)
         {
-            // We increase the number of measures of this distance
-            if(Vector3.Distance(rightShoulder.transform.position, leftShoulder.transform.position) > 0)
-            {
-                distanceShoulders = Vector3.Distance(rightShoulder.transform.position, leftShoulder.transform.position);
-                /*nbMeasuresShoulders++;
-                distanceShoulders = (distanceShoulders * (nbMeasuresShoulders - 1) + Vector3.Distance(rightShoulder.transform.position, leftShoulder.transform.position)) / (nbMeasuresShoulders);*/
-            }
-
             // State of the positions
-            CurrentState previewState = CurrentStateBody;
+            if (distanceShoulders > 4)
+            {
+                CurrentState previewState = CurrentStateBody;
 
-            if (isRightHandRight())
-            {
-                previewState = CurrentState.RIGHT_HAND_RIGHT;
-                Debug.Log(previewState + " car " + isRightHandRight());
-            }
-            else if (isRightHandLeft())
-            {
-                previewState = CurrentState.RIGHT_HAND_LEFT;
-                Debug.Log(previewState + " car " + isRightHandLeft());
-            }
-            else if (isLeftHandUp() && isRightHandUp())
-            {
-                previewState = CurrentState.HANDSUP;
-                Debug.Log(previewState + " car " + isLeftHandUp() +" "+ isRightHandUp());
-            }
-            else if (isRightHandFront())
-            {
-                previewState = CurrentState.RIGHT_HAND_FRONT;
-                Debug.Log(previewState + " car " + isRightHandFront() );
-            }
-            else if (isLeftHandFront())
-            {
-                previewState = CurrentState.LEFT_HAND_FRONT;
-                Debug.Log(previewState + " car " + isLeftHandFront());
+                if (isRightHandRight())
+                {
+                    previewState = CurrentState.RIGHT_HAND_RIGHT;
+                }
+                else if (isRightHandLeft())
+                {
+                    previewState = CurrentState.RIGHT_HAND_LEFT;
+                }
+                else if (isLeftHandUp() && isRightHandUp())
+                {
+                    previewState = CurrentState.HANDSUP;
+                }
+                else if (isRightHandFront())
+                {
+                    previewState = CurrentState.RIGHT_HAND_FRONT;
+                }
+                else if (isLeftHandFront())
+                {
+                    previewState = CurrentState.LEFT_HAND_FRONT;
+                }
+                else
+                {
+                    previewState = CurrentState.IDLE_BODY;
+                    if (Vector3.Distance(rightShoulder.transform.position, leftShoulder.transform.position) > 0)
+                    {
+                        distanceShoulders = Mathf.Abs(rightShoulder.transform.position.x- leftShoulder.transform.position.x);
+                        /*nbMeasuresShoulders++;
+                        distanceShoulders = (distanceShoulders * (nbMeasuresShoulders - 1) + Vector3.Distance(rightShoulder.transform.position, leftShoulder.transform.position)) / (nbMeasuresShoulders);*/
+                    }
+                }
+
+                if (previewState != CurrentStateBody)
+                {
+                    Debug.Log(CurrentStateBody+" to "+previewState);
+                    CurrentStateBody = previewState;
+                    EventManager.raise(MyEventTypes.STATE_CHANGED, CurrentStateBody);
+                }
+
+                //  State of orientations
+                CurrentState previewOrientationState = CurrentHandOr;
             }
             else
             {
-                previewState = CurrentState.IDLE_BODY;
-                Debug.Log(previewState);
-
+                if (Vector3.Distance(rightShoulder.transform.position, leftShoulder.transform.position) > 0)
+                {
+                    distanceShoulders = Mathf.Abs(rightShoulder.transform.position.x - leftShoulder.transform.position.x);
+                    /*nbMeasuresShoulders++;
+                    distanceShoulders = (distanceShoulders * (nbMeasuresShoulders - 1) + Vector3.Distance(rightShoulder.transform.position, leftShoulder.transform.position)) / (nbMeasuresShoulders);*/
+                }
             }
-
-            if (previewState != CurrentStateBody)
-            {
-                CurrentStateBody = previewState;
-                EventManager.raise(MyEventTypes.STATE_CHANGED, CurrentStateBody);
-            }
-
-            //  State of orientations
-            CurrentState previewOrientationState = CurrentHandOr;
         }
 	}
 
@@ -129,12 +133,12 @@ public class BodyState : MonoBehaviour
 
     bool isLeftHandFront()
     {
-        return (leftHand.transform.position.z < middleBody.transform.position.z - distanceShoulders*0.5f);
+        return (leftHand.transform.position.z < middleBody.transform.position.z - distanceShoulders*1.0f);
     }
 
     bool isRightHandFront()
     {
-        return (rightHand.transform.position.z < middleBody.transform.position.z - distanceShoulders * 0.5f);
+        return (rightHand.transform.position.z < middleBody.transform.position.z - distanceShoulders * 1.0f);
     }
 
     bool isRightHandUp()
