@@ -88,7 +88,12 @@ public static class EventManager
     /// <param name="eventToCall">The event to raise</param>
     public static void raise(MyEventTypes eventToCall)
     {
-       // Debug.Log("Raise " + eventToCall);
+        if(!dicoEventAction.ContainsKey(eventToCall))
+        {
+            Debug.LogError("Event "+ eventToCall+" is not watched but is raised");
+            return;
+        }
+
         foreach (Delegate d in dicoEventAction[eventToCall])
         {
             Callback c = (Callback)d;
@@ -105,8 +110,11 @@ public static class EventManager
 
     public static void raise<T>(MyEventTypes eventToCall, T arg)
     {
-        //Debug.Log("Raise " + eventToCall+" "+arg);
-
+        if (!dicoEventAction.ContainsKey(eventToCall))
+        {
+            Debug.LogError("Event " + eventToCall + " is not watched but is raised");
+            return;
+        }
         foreach (Delegate d in dicoEventAction[eventToCall])
         {
             Callback<T> c = (Callback<T>)d;
