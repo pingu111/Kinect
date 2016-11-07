@@ -91,6 +91,7 @@
     <Compile Include="Assets\KinectView\Scripts\MultiSourceManager.cs" />
     <Compile Include="Assets\Scripts\BodyFactory.cs" />
     <Compile Include="Assets\Scripts\BodyState.cs" />
+    <Compile Include="Assets\Scripts\ButtonToChangeScene.cs" />
     <Compile Include="Assets\Scripts\EventManager.cs" />
     <Compile Include="Assets\Scripts\GestTriggerButton.cs" />
     <Compile Include="Assets\Scripts\GesteText.cs" />

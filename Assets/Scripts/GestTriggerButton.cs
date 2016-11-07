@@ -6,11 +6,11 @@ public class GestTriggerButton : MonoBehaviour {
 
     public GameObject rightHand;
 
-    public List<Button> buttons;
+    public List<ButtonToChangeScene> buttons;
 
     public GameObject buttonActuallyTouched;
 
-    private bool touchChanged = false;
+    private bool touchChanged = true;
 
     private float timeDuringTouchDoesntChanged = 0;
 
@@ -20,34 +20,39 @@ public class GestTriggerButton : MonoBehaviour {
 	// Use this for initialization
 	void Start ()
     {
-        buttons = new List<Button>(GameObject.FindObjectsOfType<Button>());
+        buttons = new List<ButtonToChangeScene>(GameObject.FindObjectsOfType<ButtonToChangeScene>());
     }
 
 
     // Update is called once per frame
     void Update ()
     {
+        
         if(rightHand != null)
         {
-            if(!isTouchingButton(buttonActuallyTouched, rightHand.transform.position))
+            if(buttonActuallyTouched != null && !isTouchingButton(buttonActuallyTouched, rightHand.transform.position))
                 touchChanged = true;
 
-            foreach (Button b in buttons)
+            foreach (ButtonToChangeScene b in buttons)
             {
                 if(isTouchingButton(b.gameObject, rightHand.transform.position))
                 {
+                    b.GetComponentInChildren<TextMesh>().color = Color.green;
+
                     if (buttonActuallyTouched != b.gameObject)
                         touchChanged = true;
 
                     buttonActuallyTouched = b.gameObject;
                 }
+                else
+                    b.GetComponentInChildren<TextMesh>().color = Color.black;
             }
 
-            if(!touchChanged)
+            if (!touchChanged && buttonActuallyTouched !=null)
             {
                 timeDuringTouchDoesntChanged += Time.deltaTime;
                 if (timeDuringTouchDoesntChanged > timeBeforeTouchOK)
-                    buttonActuallyTouched.GetComponent<Button>().onClick.Invoke();
+                    buttonActuallyTouched.GetComponent<ButtonToChangeScene>().callEvent();
             }
             else
             {
@@ -55,16 +60,22 @@ public class GestTriggerButton : MonoBehaviour {
                 touchChanged = false;
             }
         }
+        else
+        {
+            if (this.gameObject.GetComponent<BodyState>() != null)
+                rightHand = this.gameObject.GetComponent<BodyState>().rightHand;
+        }
     }
 
     bool isTouchingButton(GameObject button, Vector2 pos)
     {
         bool touching = false;
-        if (    pos.x < (button.transform.position.x + button.GetComponent<RectTransform>().rect.height / 2) 
-             && pos.x > (button.transform.position.x - button.GetComponent<RectTransform>().rect.width / 2) 
-             && pos.y < (button.transform.position.y + button.GetComponent<RectTransform>().rect.height / 2)
-             && pos.y > (button.transform.position.y - button.GetComponent<RectTransform>().rect.height / 2))
+        if (    pos.x < (button.transform.position.x + button.GetComponent<SpriteRenderer>().bounds.size.x / 2) 
+             && pos.x > (button.transform.position.x - button.GetComponent<SpriteRenderer>().bounds.size.x / 2) 
+             && pos.y < (button.transform.position.y + button.GetComponent<SpriteRenderer>().bounds.size.y / 2)
+             && pos.y > (button.transform.position.y - button.GetComponent<SpriteRenderer>().bounds.size.y / 2))
             touching = true;
+
         return touching;
     }
 }
