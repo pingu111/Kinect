@@ -16,7 +16,6 @@ public class GestTriggerButton : MonoBehaviour {
 
     private float timeBeforeTouchOK = 1f;
 
-
 	// Use this for initialization
 	void Start ()
     {
@@ -39,13 +38,32 @@ public class GestTriggerButton : MonoBehaviour {
                 {
                     b.GetComponentInChildren<TextMesh>().color = Color.green;
 
+                    foreach(SpriteRenderer sr in b.GetComponentsInChildren<SpriteRenderer>())
+                    {
+                        if (sr.transform.parent == b.transform)
+                            sr.gameObject.transform.localScale = new Vector2((1 - timeDuringTouchDoesntChanged / timeBeforeTouchOK), sr.gameObject.transform.localScale.y);
+                    }
+
                     if (buttonActuallyTouched != b.gameObject)
+                    {
                         touchChanged = true;
+                    }
 
                     buttonActuallyTouched = b.gameObject;
                 }
                 else
+                {
                     b.GetComponentInChildren<TextMesh>().color = Color.black;
+                    foreach (SpriteRenderer sr in b.GetComponentsInChildren<SpriteRenderer>())
+                    {
+                        if (sr.transform.parent == b.transform)
+                        {
+                            sr.gameObject.transform.localScale = new Vector2(1, sr.gameObject.transform.localScale.y);
+                            Debug.Log(sr.gameObject);
+
+                        }
+                    }
+                }
             }
 
             if (!touchChanged && buttonActuallyTouched !=null)
