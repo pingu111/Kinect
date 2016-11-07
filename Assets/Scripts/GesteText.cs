@@ -35,11 +35,15 @@ public class GesteText : MonoBehaviour {
             case GesteTypes.SWIPE_RIGHT_WITH_RIGHT_HAND:
                 newText = "Baffe vers la droite ";
                 break;
+            case GesteTypes.CLAP:
+                EventManager.raise<ScenesType>(MyEventTypes.CHANGE_SCENE, ScenesType.MAIN_MENU);
+                break;
             default:
                 break;
         }
 
-        this.gameObject.GetComponent<Text>().text = (newText + " Detecté !");
+        if (this.gameObject.GetComponent<Text>() != null)
+            this.gameObject.GetComponent<Text>().text = (newText + " Detecté !");
 
         knobTest.SetActive(true);
         Invoke("hide", 0.2f);

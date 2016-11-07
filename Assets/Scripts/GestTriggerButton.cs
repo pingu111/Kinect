@@ -41,7 +41,7 @@ public class GestTriggerButton : MonoBehaviour {
                     foreach(SpriteRenderer sr in b.GetComponentsInChildren<SpriteRenderer>())
                     {
                         if (sr.transform.parent == b.transform)
-                            sr.gameObject.transform.localScale = new Vector2((1 - timeDuringTouchDoesntChanged / timeBeforeTouchOK), sr.gameObject.transform.localScale.y);
+                            sr.gameObject.transform.localScale = new Vector2((1 - Mathf.Min( timeDuringTouchDoesntChanged / timeBeforeTouchOK,1)), sr.gameObject.transform.localScale.y);
                     }
 
                     if (buttonActuallyTouched != b.gameObject)
@@ -81,7 +81,7 @@ public class GestTriggerButton : MonoBehaviour {
         else
         {
             if (this.gameObject.GetComponent<BodyState>() != null)
-                rightHand = this.gameObject.GetComponent<BodyState>().rightHand;
+                rightHand = this.gameObject.GetComponent<BodyState>().masterHand;
         }
     }
 

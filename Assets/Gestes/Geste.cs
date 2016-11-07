@@ -30,7 +30,7 @@ public abstract class Geste
             currentPositionInPath++;
             if (currentPositionInPath == statePath.Count-1)
             {
-                currentPositionInPath = 0;
+                currentPositionInPath = -1;
                 GesteDetected();
             }
         }
@@ -39,7 +39,7 @@ public abstract class Geste
             currentPositionInPath++;
             if (currentPositionInPath == statePath.Count-1)
             {
-                currentPositionInPath = 0;
+                currentPositionInPath = -1;
                 GesteDetected();
                 return;
             }
@@ -48,13 +48,13 @@ public abstract class Geste
         }
         else
         {
-            currentPositionInPath = 0;
+            currentPositionInPath = -1;
         }
     }
 
     private void GesteDetected()
     {
-        Debug.Log("Raise " + mType);
+        Debug.Log("/************ RAISE " + mType+" ***********/");
         EventManager.raise<GesteTypes>(MyEventTypes.GESTE_DETECTED, mType);
     }
 
@@ -73,6 +73,7 @@ public enum GesteTypes
 {
     SPEAK_TO_THE_HAND,
     HANDS_UP,
+    CLAP,
     SWIPE_LEFT_WITH_RIGHT_HAND,
     SWIPE_RIGHT_WITH_RIGHT_HAND,
     RUN,

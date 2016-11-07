@@ -7,19 +7,22 @@ public class BodyState : MonoBehaviour
 {
     // Les parties du corps qu'on suit
 
-    public GameObject rightHand;
+    public GameObject masterHand;
 
-    public GameObject leftHand;
+    public GameObject otherHand;
 
-    public GameObject leftWrist;
 
     public GameObject rightWrist;
 
-    public GameObject rightShoulder;
+    public GameObject masterShoulder;
 
-    public GameObject leftShoulder;
+    public GameObject otherShoulder;
 
     public GameObject middleBody;
+
+    public GameObject rightTip;
+
+    private float threesholdHandOr = 20;
 
     private CurrentState _currentHandOr;
     private CurrentState CurrentHandOr
@@ -52,7 +55,7 @@ public class BodyState : MonoBehaviour
 
     void Start()
     {
-        listGestes = new List<Geste>{new ParlesAMaMain(), new PeauDeLapin(), new Run(), new Salut(), new SwipeDroite(), new SwipeGauche()};
+        listGestes = new List<Geste>{new ParlesAMaMain(), new PeauDeLapin(), new Run(), new Salut(), new SwipeDroite(), new SwipeGauche(), new Clap()};
         CurrentHandOr = CurrentState.IDLE_HAND;
         CurrentStateBody = CurrentState.IDLE_BODY;
     }
@@ -60,24 +63,24 @@ public class BodyState : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
     {
-	    if(rightHand != null && leftHand != null && rightShoulder != null && leftShoulder != null && middleBody != null)
+	    if(masterHand != null && otherHand != null && masterShoulder != null && otherShoulder != null && middleBody != null)
         {
             // State of the positions
-            if (distanceShoulders > 4)
+            if (distanceShoulders > 2.5f)
             {
                 CurrentState previewState = CurrentStateBody;
 
-                if (isRightHandRight())
+                if (isLeftHandUp() && isRightHandUp())
+                {
+                    previewState = CurrentState.HANDSUP;
+                }
+                else if (isRightHandRight())
                 {
                     previewState = CurrentState.RIGHT_HAND_RIGHT;
                 }
                 else if (isRightHandLeft())
                 {
                     previewState = CurrentState.RIGHT_HAND_LEFT;
-                }
-                else if (isLeftHandUp() && isRightHandUp())
-                {
-                    previewState = CurrentState.HANDSUP;
                 }
                 else if (isRightHandFront())
                 {
@@ -87,12 +90,14 @@ public class BodyState : MonoBehaviour
                 {
                     previewState = CurrentState.LEFT_HAND_FRONT;
                 }
+                else if(areHandClapped())
+                    previewState = CurrentState.CLAP_HAND;
                 else
                 {
                     previewState = CurrentState.IDLE_BODY;
-                    if (Vector3.Distance(rightShoulder.transform.position, leftShoulder.transform.position) > 0)
+                    if (Vector3.Distance(masterShoulder.transform.position, otherShoulder.transform.position) > 0)
                     {
-                        distanceShoulders = Mathf.Abs(rightShoulder.transform.position.x- leftShoulder.transform.position.x);
+                        distanceShoulders = Mathf.Abs(masterShoulder.transform.position.x - otherShoulder.transform.position.x);
                         /*nbMeasuresShoulders++;
                         distanceShoulders = (distanceShoulders * (nbMeasuresShoulders - 1) + Vector3.Distance(rightShoulder.transform.position, leftShoulder.transform.position)) / (nbMeasuresShoulders);*/
                     }
@@ -100,19 +105,41 @@ public class BodyState : MonoBehaviour
 
                 if (previewState != CurrentStateBody)
                 {
-                    Debug.Log(CurrentStateBody+" to "+previewState);
+                    Debug.Log("new :"+previewState);
                     CurrentStateBody = previewState;
                     EventManager.raise(MyEventTypes.STATE_CHANGED, CurrentStateBody);
                 }
 
+
                 //  State of orientations
-                CurrentState previewOrientationState = CurrentHandOr;
+                previewState = CurrentHandOr;
+
+                if (isRightHandOrientedLeft())
+                {
+                    previewState = CurrentState.RIGHT_HAND_ORIENTATION_LEFT;
+                }
+                else if (isRightHandOrientedRight())
+                {
+                    previewState = CurrentState.RIGHT_HAND_ORIENTATION_RIGHT;
+                }
+                else if (isRightHandIdle())
+                {
+                    previewState = CurrentState.IDLE_HAND;
+                }
+
+                if (previewState != CurrentHandOr)
+                {
+                    Debug.Log("new :" + previewState);
+                    CurrentHandOr = previewState;
+                    EventManager.raise(MyEventTypes.STATE_CHANGED, CurrentHandOr);
+                }
+
             }
             else
             {
-                if (Vector3.Distance(rightShoulder.transform.position, leftShoulder.transform.position) > 0)
+                if (Vector3.Distance(masterShoulder.transform.position, otherShoulder.transform.position) > 0)
                 {
-                    distanceShoulders = Mathf.Abs(rightShoulder.transform.position.x - leftShoulder.transform.position.x);
+                    distanceShoulders = Mathf.Abs(masterShoulder.transform.position.x - otherShoulder.transform.position.x);
                     /*nbMeasuresShoulders++;
                     distanceShoulders = (distanceShoulders * (nbMeasuresShoulders - 1) + Vector3.Distance(rightShoulder.transform.position, leftShoulder.transform.position)) / (nbMeasuresShoulders);*/
                 }
@@ -123,33 +150,60 @@ public class BodyState : MonoBehaviour
 
     bool isRightHandRight()
     {
-        return(rightHand.transform.position.x > rightShoulder.transform.position.x + distanceShoulders);
+        return(masterHand.transform.position.x > masterShoulder.transform.position.x + distanceShoulders *1.0f);
     }
 
     bool isRightHandLeft()
     {
-        return (rightHand.transform.position.x < leftShoulder.transform.position.x);
+        return (masterHand.transform.position.x < otherShoulder.transform.position.x);
     }
 
     bool isLeftHandFront()
     {
-        return (leftHand.transform.position.z < middleBody.transform.position.z - distanceShoulders*1.0f);
+        return (otherHand.transform.position.z < otherShoulder.transform.position.z - distanceShoulders*1.0f);
     }
 
     bool isRightHandFront()
     {
-        return (rightHand.transform.position.z < middleBody.transform.position.z - distanceShoulders * 1.0f);
+        return (masterHand.transform.position.z < masterShoulder.transform.position.z - distanceShoulders * 1.0f);
     }
 
     bool isRightHandUp()
     {
-        return (rightHand.transform.position.y > rightShoulder.transform.position.y);
+        return (masterHand.transform.position.y > masterShoulder.transform.position.y);
     }
 
     bool isLeftHandUp()
     {
-        return (leftHand.transform.position.y > leftShoulder.transform.position.y);
+        return (otherHand.transform.position.y > otherShoulder.transform.position.y);
     }
+
+    bool isRightHandOrientedRight()
+    {
+        float dx = rightTip.transform.position.x - rightWrist.transform.position.x;
+        float dy = rightTip.transform.position.y - rightWrist.transform.position.y;
+        return (Mathf.Atan2(dx, dy) * Mathf.Rad2Deg > threesholdHandOr);
+    }
+    bool isRightHandOrientedLeft()
+    {
+        float dx = rightTip.transform.position.x - rightWrist.transform.position.x;
+        float dy = rightTip.transform.position.y - rightWrist.transform.position.y;
+        return (Mathf.Atan2(dx, dy) * Mathf.Rad2Deg < -threesholdHandOr);
+    }
+
+    bool isRightHandIdle()
+    {
+        float dx = rightTip.transform.position.x - rightWrist.transform.position.x;
+        float dy = rightTip.transform.position.y - rightWrist.transform.position.y;
+        return (Mathf.Atan2(dx, dy) * Mathf.Rad2Deg > -threesholdHandOr && Mathf.Atan2(dx, dy) * Mathf.Rad2Deg < threesholdHandOr);
+    }
+
+
+    bool areHandClapped()
+    {
+        return (Vector3.Distance(masterHand.transform.position, otherHand.transform.position) < 1);
+    }
+
 }
 
 
@@ -212,6 +266,8 @@ public enum CurrentState
     RIGHT_HAND_LEFT,
     [TypeOfStateValue(TypeOfState.BODY_STATE)]
     HANDSUP,
+    [TypeOfStateValue(TypeOfState.BODY_STATE)]
+    CLAP_HAND,
 
     [TypeOfStateValue(TypeOfState.HAND_ORIENTATION)]
     IDLE_HAND,

@@ -12,7 +12,14 @@ public class PeauDeLapin : Geste
     {
         mType = GesteTypes.HANDS_UP;
         AddStateToPath(CurrentState.IDLE_BODY);
+        AddStateToPath(CurrentState.LEFT_HAND_FRONT, false);
+        AddStateToPath(CurrentState.RIGHT_HAND_FRONT, false);
+        AddStateToPath(CurrentState.LEFT_HAND_FRONT, false);
         AddStateToPath(CurrentState.HANDSUP);
+        AddStateToPath(CurrentState.LEFT_HAND_FRONT, false);
+        AddStateToPath(CurrentState.RIGHT_HAND_FRONT, false);
+        AddStateToPath(CurrentState.LEFT_HAND_FRONT, false);
         AddStateToPath(CurrentState.IDLE_BODY);
+
     }
 }

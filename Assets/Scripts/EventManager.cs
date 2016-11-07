@@ -8,7 +8,6 @@ using UnityEngine;
 public enum MyEventTypes
 {
     STATE_CHANGED,
-    ORIENTATION_STATE_CHANGED,
     GESTE_DETECTED,
     CHANGE_SCENE
 }
