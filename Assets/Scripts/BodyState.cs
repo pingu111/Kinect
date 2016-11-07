@@ -5,12 +5,14 @@ using System.Reflection;
 
 public class BodyState : MonoBehaviour
 {
-    // Les parties du corps qu'on suit
 
+    public GameObject knobIfDetected;
+
+
+    // Les parties du corps qu'on suit
     public GameObject masterHand;
 
     public GameObject otherHand;
-
 
     public GameObject rightWrist;
 
@@ -68,6 +70,9 @@ public class BodyState : MonoBehaviour
             // State of the positions
             if (distanceShoulders > 2.5f)
             {
+                if(knobIfDetected != null)
+                    knobIfDetected.SetActive(false);
+
                 CurrentState previewState = CurrentStateBody;
 
                 if (isLeftHandUp() && isRightHandUp())
@@ -137,6 +142,9 @@ public class BodyState : MonoBehaviour
             }
             else
             {
+                if (knobIfDetected != null)
+                    knobIfDetected.SetActive(true);
+
                 if (Vector3.Distance(masterShoulder.transform.position, otherShoulder.transform.position) > 0)
                 {
                     distanceShoulders = Mathf.Abs(masterShoulder.transform.position.x - otherShoulder.transform.position.x);
