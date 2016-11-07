@@ -9,6 +9,7 @@ public enum ScenesType
     DETECTION,
     QUIT,
     MAIN_MENU,
+    FORMULAIRE,
     EVALUATION
 }
 
@@ -55,8 +56,8 @@ public class SceneManager : MonoBehaviour
             case ScenesType.DETECTION:
                 goToDetection();
                 break;
-            case ScenesType.EVALUATION:
-                goToEvaluation();
+            case ScenesType.FORMULAIRE:
+                goToFormulaire();
                 break;
             case ScenesType.QUIT:
                 quitGame();
@@ -79,6 +80,11 @@ public class SceneManager : MonoBehaviour
     public void goToEvaluation()
     {
         UnityEngine.SceneManagement.SceneManager.LoadScene("EvaluationScene");
+    }
+
+    public void goToFormulaire()
+    {
+        UnityEngine.SceneManagement.SceneManager.LoadScene("Formulaire");
     }
 
     public void goToDetection()
