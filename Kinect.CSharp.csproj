@@ -72,10 +72,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\BodyFactory.cs" />
-    <Compile Include="Assets\BodyState.cs" />
-    <Compile Include="Assets\EventManager.cs" />
-    <Compile Include="Assets\GesteText.cs" />
     <Compile Include="Assets\Gestes\Geste.cs" />
     <Compile Include="Assets\Gestes\ParlesAMaMain.cs" />
     <Compile Include="Assets\Gestes\PeauDeLapin.cs" />
@@ -93,7 +89,13 @@
     <Compile Include="Assets\KinectView\Scripts\InfraredSourceManager.cs" />
     <Compile Include="Assets\KinectView\Scripts\InfraredSourceView.cs" />
     <Compile Include="Assets\KinectView\Scripts\MultiSourceManager.cs" />
-    <Compile Include="Assets\Movement.cs" />
+    <Compile Include="Assets\Scripts\BodyFactory.cs" />
+    <Compile Include="Assets\Scripts\BodyState.cs" />
+    <Compile Include="Assets\Scripts\EventManager.cs" />
+    <Compile Include="Assets\Scripts\GestTriggerButton.cs" />
+    <Compile Include="Assets\Scripts\GesteText.cs" />
+    <Compile Include="Assets\Scripts\Movement.cs" />
+    <Compile Include="Assets\Scripts\SceneManager.cs" />
     <Compile Include="Assets\Utils\Pair.cs" />
   </ItemGroup>
   <ItemGroup>

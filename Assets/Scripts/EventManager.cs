@@ -9,7 +9,8 @@ public enum MyEventTypes
 {
     STATE_CHANGED,
     ORIENTATION_STATE_CHANGED,
-    GESTE_DETECTED
+    GESTE_DETECTED,
+    CHANGE_SCENE
 }
 
 public delegate void Callback();
