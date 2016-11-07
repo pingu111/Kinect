@@ -51,6 +51,7 @@ public class BodyState : MonoBehaviour
     private float distanceShoulders = 0;
     private int nbMeasuresShoulders = 0;
 
+    public bool isRightHandMaster = true;
 
     public List<Geste> listGestes;
 
@@ -60,6 +61,9 @@ public class BodyState : MonoBehaviour
         listGestes = new List<Geste>{new ParlesAMaMain(), new PeauDeLapin(), new Run(), new Salut(), new SwipeDroite(), new SwipeGauche(), new Clap()};
         CurrentHandOr = CurrentState.IDLE_HAND;
         CurrentStateBody = CurrentState.IDLE_BODY;
+
+        if (FindObjectsOfType<GetInformationsScript>().Length > 0)
+            isRightHandMaster = FindObjectOfType<GetInformationsScript>().userInfos.isRightHanded;
     }
 
 	// Update is called once per frame
@@ -205,6 +209,8 @@ public class BodyState : MonoBehaviour
         float dy = rightTip.transform.position.y - rightWrist.transform.position.y;
         return (Mathf.Atan2(dx, dy) * Mathf.Rad2Deg > -threesholdHandOr && Mathf.Atan2(dx, dy) * Mathf.Rad2Deg < threesholdHandOr);
     }
+
+
 
 
     bool areHandClapped()
