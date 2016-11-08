@@ -81,7 +81,7 @@ public class GestTriggerButton : MonoBehaviour {
         else
         {
             if (this.gameObject.GetComponent<BodyState>() != null)
-                rightHand = this.gameObject.GetComponent<BodyState>().masterHand;
+                rightHand = this.gameObject.GetComponent<BodyState>().rightHand;
         }
     }
 

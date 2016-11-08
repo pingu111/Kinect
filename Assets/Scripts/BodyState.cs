@@ -10,19 +10,19 @@ public class BodyState : MonoBehaviour
 
 
     // Les parties du corps qu'on suit
-    public GameObject masterHand;
-
-    public GameObject otherHand;
+    public GameObject rightHand;
+    public GameObject leftHand;
 
     public GameObject rightWrist;
+    public GameObject leftWrist;
 
-    public GameObject masterShoulder;
-
-    public GameObject otherShoulder;
+    public GameObject rightShoulder;
+    public GameObject leftShoulder;
 
     public GameObject middleBody;
 
     public GameObject rightTip;
+    public GameObject leftTip;
 
     private float threesholdHandOr = 20;
 
@@ -69,7 +69,7 @@ public class BodyState : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
     {
-	    if(masterHand != null && otherHand != null && masterShoulder != null && otherShoulder != null && middleBody != null)
+	    if(rightHand != null && leftHand != null && rightShoulder != null && leftShoulder != null && middleBody != null)
         {
             // State of the positions
             if (distanceShoulders > 2.5f)
@@ -104,11 +104,9 @@ public class BodyState : MonoBehaviour
                 else
                 {
                     previewState = CurrentState.IDLE_BODY;
-                    if (Vector3.Distance(masterShoulder.transform.position, otherShoulder.transform.position) > 0)
+                    if (Vector3.Distance(rightShoulder.transform.position, leftShoulder.transform.position) > 0)
                     {
-                        distanceShoulders = Mathf.Abs(masterShoulder.transform.position.x - otherShoulder.transform.position.x);
-                        /*nbMeasuresShoulders++;
-                        distanceShoulders = (distanceShoulders * (nbMeasuresShoulders - 1) + Vector3.Distance(rightShoulder.transform.position, leftShoulder.transform.position)) / (nbMeasuresShoulders);*/
+                        distanceShoulders = Mathf.Abs(rightShoulder.transform.position.x - leftShoulder.transform.position.x);
                     }
                 }
 
@@ -142,18 +140,15 @@ public class BodyState : MonoBehaviour
                     CurrentHandOr = previewState;
                     EventManager.raise(MyEventTypes.STATE_CHANGED, CurrentHandOr);
                 }
-
             }
             else
             {
                 if (knobIfDetected != null)
                     knobIfDetected.SetActive(true);
 
-                if (Vector3.Distance(masterShoulder.transform.position, otherShoulder.transform.position) > 0)
+                if (Vector3.Distance(rightShoulder.transform.position, leftShoulder.transform.position) > 0)
                 {
-                    distanceShoulders = Mathf.Abs(masterShoulder.transform.position.x - otherShoulder.transform.position.x);
-                    /*nbMeasuresShoulders++;
-                    distanceShoulders = (distanceShoulders * (nbMeasuresShoulders - 1) + Vector3.Distance(rightShoulder.transform.position, leftShoulder.transform.position)) / (nbMeasuresShoulders);*/
+                    distanceShoulders = Mathf.Abs(rightShoulder.transform.position.x - leftShoulder.transform.position.x);                 
                 }
             }
         }
@@ -162,33 +157,43 @@ public class BodyState : MonoBehaviour
 
     bool isRightHandRight()
     {
-        return(masterHand.transform.position.x > masterShoulder.transform.position.x + distanceShoulders *1.0f);
+        return(rightHand.transform.position.x > rightShoulder.transform.position.x + distanceShoulders *1.0f);
     }
+    bool isLeftHandRight()
+    {
+        return (leftHand.transform.position.x < leftShoulder.transform.position.x - distanceShoulders * 1.0f);
+    }
+
 
     bool isRightHandLeft()
     {
-        return (masterHand.transform.position.x < otherShoulder.transform.position.x);
+        return (rightHand.transform.position.x < leftShoulder.transform.position.x);
     }
+    bool isLeftHandLeft()
+    {
+        return (leftHand.transform.position.x > leftShoulder.transform.position.x);
+    }
+
 
     bool isLeftHandFront()
     {
-        return (otherHand.transform.position.z < otherShoulder.transform.position.z - distanceShoulders*1.0f);
+        return (leftHand.transform.position.z < leftShoulder.transform.position.z - distanceShoulders*1.0f);
     }
-
     bool isRightHandFront()
     {
-        return (masterHand.transform.position.z < masterShoulder.transform.position.z - distanceShoulders * 1.0f);
+        return (rightHand.transform.position.z < rightShoulder.transform.position.z - distanceShoulders * 1.0f);
     }
+
 
     bool isRightHandUp()
     {
-        return (masterHand.transform.position.y > masterShoulder.transform.position.y);
+        return (rightHand.transform.position.y > rightShoulder.transform.position.y);
     }
-
     bool isLeftHandUp()
     {
-        return (otherHand.transform.position.y > otherShoulder.transform.position.y);
+        return (leftHand.transform.position.y > leftShoulder.transform.position.y);
     }
+
 
     bool isRightHandOrientedRight()
     {
@@ -211,11 +216,30 @@ public class BodyState : MonoBehaviour
     }
 
 
+    bool isLeftHandOrientedRight()
+    {
+        float dx = leftTip.transform.position.x - leftWrist.transform.position.x;
+        float dy = leftTip.transform.position.y - leftWrist.transform.position.y;
+        return (Mathf.Atan2(dx, dy) * Mathf.Rad2Deg > threesholdHandOr);
+    }
+    bool isLeftHandOrientedLeft()
+    {
+        float dx = leftTip.transform.position.x - leftWrist.transform.position.x;
+        float dy = leftTip.transform.position.y - leftWrist.transform.position.y;
+        return (Mathf.Atan2(dx, dy) * Mathf.Rad2Deg < -threesholdHandOr);
+    }
+
+    bool isLeftHandIdle()
+    {
+        float dx = leftTip.transform.position.x - leftWrist.transform.position.x;
+        float dy = leftTip.transform.position.y - leftWrist.transform.position.y;
+        return (Mathf.Atan2(dx, dy) * Mathf.Rad2Deg > -threesholdHandOr && Mathf.Atan2(dx, dy) * Mathf.Rad2Deg < threesholdHandOr);
+    }
 
 
     bool areHandClapped()
     {
-        return (Vector3.Distance(masterHand.transform.position, otherHand.transform.position) < 1);
+        return (Vector3.Distance(rightHand.transform.position, leftHand.transform.position) < 0.5f);
     }
 
 }
