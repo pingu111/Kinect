@@ -20,6 +20,8 @@ public class SceneManager : MonoBehaviour
 {
     ScenesType actualScene = ScenesType.MAIN_MENU;
 
+    Informations userInfos;
+
     // Use this for initialization
     void Start()
     {
@@ -31,7 +33,13 @@ public class SceneManager : MonoBehaviour
         {
             DontDestroyOnLoad(this.gameObject);
             EventManager.addActionToEvent<ScenesType>(MyEventTypes.CHANGE_SCENE, changeScene);
+            EventManager.addActionToEvent<Informations>(MyEventTypes.LAUNCH_INFOS, getUserInfos);
         }
+    }
+
+    public void getUserInfos(Informations info)
+    {
+        userInfos = info;
     }
 
     private IEnumerator waitThenQuitApplication()

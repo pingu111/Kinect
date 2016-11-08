@@ -16,10 +16,11 @@ public class GestTriggerButton : MonoBehaviour {
 
     private float timeBeforeTouchOK = 1f;
 
-	// Use this for initialization
-	void Start ()
+    // Use this for initialization
+    void Start()
     {
         buttons = new List<ButtonToChangeScene>(GameObject.FindObjectsOfType<ButtonToChangeScene>());
+        EventManager.addActionToEvent<GesteTypes>(MyEventTypes.GESTE_DETECTED,(GesteTypes lol)=> {; } );
     }
 
 
@@ -59,8 +60,6 @@ public class GestTriggerButton : MonoBehaviour {
                         if (sr.transform.parent == b.transform)
                         {
                             sr.gameObject.transform.localScale = new Vector2(1, sr.gameObject.transform.localScale.y);
-                            Debug.Log(sr.gameObject);
-
                         }
                     }
                 }
@@ -95,6 +94,11 @@ public class GestTriggerButton : MonoBehaviour {
             touching = true;
 
         return touching;
+    }
+
+    void OnDestroy()
+    {
+        EventManager.removeActionFromEvent<GesteTypes>(MyEventTypes.GESTE_DETECTED, (GesteTypes lol) => {; });
     }
 }
 

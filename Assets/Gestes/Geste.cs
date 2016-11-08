@@ -7,6 +7,8 @@ using System.Collections.Generic;
 /// creer la méthode OnStart et y informer le type dans mType 
 /// y ajouter ignoreHandOrientation si on veut ecouter l'orientation de la main
 /// puis ajouter les differents etats avec AddStateToPath (informer si l'est est important ou non avec le booleen)
+/// 
+/// IMPORTANT toujours commencer par un IDLE_BODY !
 /// </summary>
 public abstract class Geste
 {
@@ -27,7 +29,7 @@ public abstract class Geste
 
     void OnStateChange(CurrentState newState)
     {
-        if (newState.GetType().Equals(TypeOfState.HAND_ORIENTATION) && ignoreHandOrientation)
+        if (TypoeOfStateEnum.GetTypoeOfStateValue(newState).Equals(TypeOfState.HAND_ORIENTATION) && ignoreHandOrientation)
             return;
         if (newState == statePath[currentPositionInPath + 1].First)
         {
@@ -36,6 +38,8 @@ public abstract class Geste
             {
                 currentPositionInPath = -1;
                 GesteDetected();
+                OnStateChange(newState);
+                return;
             }
         }
         else if (!statePath[currentPositionInPath + 1].Second)
@@ -45,6 +49,7 @@ public abstract class Geste
             {
                 currentPositionInPath = -1;
                 GesteDetected();
+                OnStateChange(newState);
                 return;
             }
             OnStateChange(newState);
@@ -53,12 +58,14 @@ public abstract class Geste
         else
         {
             currentPositionInPath = -1;
+            if (newState.Equals(CurrentState.IDLE_BODY))
+                currentPositionInPath++;
         }
     }
 
     private void GesteDetected()
     {
-        Debug.Log("/************ RAISE " + mType+" ***********/");
+        Debug.Log("/************ RAISE " + mType+" ***********/ "+Time.time);
         EventManager.raise<GesteTypes>(MyEventTypes.GESTE_DETECTED, mType);
     }
 
@@ -68,6 +75,11 @@ public abstract class Geste
     {
         EventManager.addActionToEvent<CurrentState>(MyEventTypes.STATE_CHANGED, OnStateChange);
         OnStart();
+    }
+
+    public void OnDestroy()
+    {
+        EventManager.removeActionFromEvent<CurrentState>(MyEventTypes.STATE_CHANGED, OnStateChange);
     }
 }
 

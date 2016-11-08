@@ -24,7 +24,10 @@ public class BodyState : MonoBehaviour
     public GameObject rightTip;
     public GameObject leftTip;
 
-    private float threesholdHandOr = 20;
+
+    private float threesholdHandOr = 30;
+
+    int nbGest = 0;
 
     private CurrentState _currentHandOr;
     private CurrentState CurrentHandOr
@@ -53,12 +56,14 @@ public class BodyState : MonoBehaviour
 
     public bool isRightHandMaster = true;
 
-    public List<Geste> listGestes;
+    public List<Geste> listGestes = new List<Geste>();
 
 
     void Start()
     {
+        listGestes.Clear();
         listGestes = new List<Geste>{new ParlesAMaMain(), new PeauDeLapin(), new Run(), new Salut(), new SwipeDroite(), new SwipeGauche(), new Clap()};
+
         CurrentHandOr = CurrentState.IDLE_HAND;
         CurrentStateBody = CurrentState.IDLE_BODY;
 
@@ -82,6 +87,14 @@ public class BodyState : MonoBehaviour
                 if (isLeftHandUp() && isRightHandUp())
                 {
                     previewState = CurrentState.HANDSUP;
+                }
+                else if(isRightHandRunning())
+                {
+                    previewState = CurrentState.RIGHT_HAND_RUNNING;
+                }
+                else if (isLeftHandRunning())
+                {
+                    previewState = CurrentState.LEFT_HAND_RUNNING;
                 }
                 else if (isRightHandRight())
                 {
@@ -112,7 +125,8 @@ public class BodyState : MonoBehaviour
 
                 if (previewState != CurrentStateBody)
                 {
-                    Debug.Log("new :"+previewState);
+                    Debug.Log("new :"+previewState+" "+Time.time +" "+ nbGest);
+                    nbGest++;
                     CurrentStateBody = previewState;
                     EventManager.raise(MyEventTypes.STATE_CHANGED, CurrentStateBody);
                 }
@@ -157,11 +171,11 @@ public class BodyState : MonoBehaviour
 
     bool isRightHandRight()
     {
-        return(rightHand.transform.position.x > rightShoulder.transform.position.x + distanceShoulders *1.0f);
+        return(rightHand.transform.position.x > rightShoulder.transform.position.x + distanceShoulders * 0.75f);
     }
     bool isLeftHandRight()
     {
-        return (leftHand.transform.position.x < leftShoulder.transform.position.x - distanceShoulders * 1.0f);
+        return (leftHand.transform.position.x < leftShoulder.transform.position.x - distanceShoulders * 0.75f);
     }
 
 
@@ -172,6 +186,15 @@ public class BodyState : MonoBehaviour
     bool isLeftHandLeft()
     {
         return (leftHand.transform.position.x > leftShoulder.transform.position.x);
+    }
+
+    bool isLeftHandRunning()
+    {
+        return ((leftHand.transform.position.z < leftShoulder.transform.position.z + distanceShoulders * 0.25f) && (Mathf.Abs(leftHand.transform.position.y - leftShoulder.transform.position.y) < 0.5f)) ; 
+    }
+    bool isRightHandRunning()
+    {
+        return ((rightHand.transform.position.z < rightShoulder.transform.position.z + distanceShoulders * 0.25f) && (Mathf.Abs(rightHand.transform.position.y - rightShoulder.transform.position.y) < 0.5f));
     }
 
 
@@ -239,9 +262,16 @@ public class BodyState : MonoBehaviour
 
     bool areHandClapped()
     {
-        return (Vector3.Distance(rightHand.transform.position, leftHand.transform.position) < 0.5f);
+        return (Vector3.Distance(rightHand.transform.position, leftHand.transform.position) < 1.0f && Mathf.Abs(rightHand.transform.position.y - rightShoulder.transform.position.y) < 1.5f);
     }
 
+    void OnDestroy()
+    {
+        foreach (Geste g in listGestes)
+        {
+            g.OnDestroy();
+        }
+    }
 }
 
 
@@ -306,6 +336,10 @@ public enum CurrentState
     HANDSUP,
     [TypeOfStateValue(TypeOfState.BODY_STATE)]
     CLAP_HAND,
+    [TypeOfStateValue(TypeOfState.BODY_STATE)]
+    LEFT_HAND_RUNNING,
+    [TypeOfStateValue(TypeOfState.BODY_STATE)]
+    RIGHT_HAND_RUNNING,
 
     [TypeOfStateValue(TypeOfState.HAND_ORIENTATION)]
     IDLE_HAND,

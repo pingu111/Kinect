@@ -53,4 +53,10 @@ public class GesteText : MonoBehaviour {
     {
         knobTest.SetActive(false);
     }
+
+    void OnDestroy()
+    {
+        EventManager.removeActionFromEvent<GesteTypes>(MyEventTypes.GESTE_DETECTED, gesteDetected);
+
+    }
 }

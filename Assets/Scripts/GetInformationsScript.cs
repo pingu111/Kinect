@@ -14,7 +14,6 @@ public class Informations
 
 public class GetInformationsScript : MonoBehaviour
 {
-
     public Toggle isRightHanded;
     public Text nom;
     public Text age;
@@ -26,14 +25,7 @@ public class GetInformationsScript : MonoBehaviour
     // Use this for initialization
     void Start ()
     {
-        if (FindObjectsOfType<GetInformationsScript>().Length > 1)
-            Destroy(this.gameObject);
-        else
-        {
-            DontDestroyOnLoad(this.gameObject);
-            EventManager.addActionToEvent(MyEventTypes.GET_INFORMATIONS, getInformationsThenLeave);
-        }
-
+        EventManager.addActionToEvent(MyEventTypes.GET_INFORMATIONS, getInformationsThenLeave);
     }
 
     public void getInformationsThenLeave()
@@ -45,7 +37,14 @@ public class GetInformationsScript : MonoBehaviour
         userInfos.frequence = frequence.text;
         userInfos.isRightHanded = isRightHanded.isOn;
 
+        EventManager.raise<Informations>(MyEventTypes.LAUNCH_INFOS, userInfos);
         EventManager.raise<ScenesType>(MyEventTypes.CHANGE_SCENE, ScenesType.DETECTION);
+    }
+
+    public void OnDestroy()
+    {
+        EventManager.removeActionFromEvent(MyEventTypes.GET_INFORMATIONS, getInformationsThenLeave);
+
     }
 
 

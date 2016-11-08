@@ -9,6 +9,7 @@ public enum MyEventTypes
 {
     STATE_CHANGED,
     GESTE_DETECTED,
+    LAUNCH_INFOS,
     CHANGE_SCENE,
     GET_INFORMATIONS
 }

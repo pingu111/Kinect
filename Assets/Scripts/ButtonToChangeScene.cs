@@ -32,7 +32,6 @@ public class ButtonToChangeScene : MonoBehaviour
 
     public void callEvent()
     {
-        Debug.Log(eventToCallIfClicked);
         if(eventToCallIfClicked == MyEventTypes.CHANGE_SCENE)
             EventManager.raise<ScenesType>(eventToCallIfClicked, typeOfSceneChanging);
     }
