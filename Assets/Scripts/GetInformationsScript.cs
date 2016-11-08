@@ -38,7 +38,7 @@ public class GetInformationsScript : MonoBehaviour
         userInfos.isRightHanded = isRightHanded.isOn;
 
         EventManager.raise<Informations>(MyEventTypes.LAUNCH_INFOS, userInfos);
-        EventManager.raise<ScenesType>(MyEventTypes.CHANGE_SCENE, ScenesType.DETECTION);
+        EventManager.raise<ScenesType>(MyEventTypes.CHANGE_SCENE, ScenesType.EVALUATION);
     }
 
     public void OnDestroy()

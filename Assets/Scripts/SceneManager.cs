@@ -67,6 +67,9 @@ public class SceneManager : MonoBehaviour
             case ScenesType.FORMULAIRE:
                 goToFormulaire();
                 break;
+            case ScenesType.EVALUATION:
+                goToEvaluation();
+                break;  
             case ScenesType.QUIT:
                 quitGame();
                 break;
