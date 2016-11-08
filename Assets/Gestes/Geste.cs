@@ -32,18 +32,18 @@ public abstract class Geste
         if (newState == statePath[currentPositionInPath + 1].First)
         {
             currentPositionInPath++;
-            if (currentPositionInPath == statePath.Count)
+            if (currentPositionInPath == statePath.Count-1)
             {
-                currentPositionInPath = 0;
+                currentPositionInPath = -1;
                 GesteDetected();
             }
         }
         else if (!statePath[currentPositionInPath + 1].Second)
         {
             currentPositionInPath++;
-            if (currentPositionInPath == statePath.Count)
+            if (currentPositionInPath == statePath.Count-1)
             {
-                currentPositionInPath = 0;
+                currentPositionInPath = -1;
                 GesteDetected();
                 return;
             }
@@ -52,18 +52,19 @@ public abstract class Geste
         }
         else
         {
-            currentPositionInPath = 0;
+            currentPositionInPath = -1;
         }
     }
 
     private void GesteDetected()
     {
+        Debug.Log("/************ RAISE " + mType+" ***********/");
         EventManager.raise<GesteTypes>(MyEventTypes.GESTE_DETECTED, mType);
     }
 
     protected abstract void OnStart();
 
-    void Start()
+    protected Geste()
     {
         EventManager.addActionToEvent<CurrentState>(MyEventTypes.STATE_CHANGED, OnStateChange);
         OnStart();
@@ -76,6 +77,7 @@ public enum GesteTypes
 {
     SPEAK_TO_THE_HAND,
     HANDS_UP,
+    CLAP,
     SWIPE_LEFT_WITH_RIGHT_HAND,
     SWIPE_RIGHT_WITH_RIGHT_HAND,
     RUN,

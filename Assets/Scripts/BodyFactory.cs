@@ -22,25 +22,25 @@ public class BodyFactory : MonoBehaviour
             switch(part.GetComponent<Movement>().joint)
             {
                 case jointType.HandLeft:
-                    this.gameObject.GetComponent<BodyState>().leftHand = part;
+                    this.gameObject.GetComponent<BodyState>().otherHand = part;
                     break;
                 case jointType.HandRight:
-                    this.gameObject.GetComponent<BodyState>().rightHand = part;
+                    this.gameObject.GetComponent<BodyState>().masterHand = part;
                     break;
                 case jointType.ShoulderLeft:
-                    this.gameObject.GetComponent<BodyState>().leftShoulder = part;
+                    this.gameObject.GetComponent<BodyState>().otherShoulder = part;
                     break;
                 case jointType.ShoulderRight:
-                    this.gameObject.GetComponent<BodyState>().rightShoulder = part;
+                    this.gameObject.GetComponent<BodyState>().masterShoulder = part;
                     break;
                 case jointType.SpineMid:
                     this.gameObject.GetComponent<BodyState>().middleBody = part;
                     break;
-                case jointType.WristLeft:
-                    this.gameObject.GetComponent<BodyState>().leftWrist = part;
-                    break;
                 case jointType.WristRight:
                     this.gameObject.GetComponent<BodyState>().rightWrist = part;
+                    break;
+                case jointType.HandTipRight:
+                    this.gameObject.GetComponent<BodyState>().rightTip = part;
                     break;
                 default:
                     break;

@@ -5,6 +5,10 @@ using System.Collections.Generic;
 
 public class ParlesAMaMain : Geste
 { 
+    public ParlesAMaMain() : base()
+    {
+    }
+
     protected override void OnStart ()
     {
         mType = GesteTypes.SPEAK_TO_THE_HAND;

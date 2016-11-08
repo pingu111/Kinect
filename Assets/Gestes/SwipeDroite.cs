@@ -4,6 +4,10 @@ using System;
 
 public class SwipeDroite : Geste
 {
+    public SwipeDroite() : base()
+    {
+    }
+
     protected override void OnStart()
     {
         mType = GesteTypes.SWIPE_RIGHT_WITH_RIGHT_HAND;
