@@ -10,6 +10,7 @@ public class Salut : Geste {
 
     protected override void OnStart()
     {
+        ignoreHandOrientation = false;
         mType = GesteTypes.HI;
         AddStateToPath(CurrentState.IDLE_HAND);
         AddStateToPath(CurrentState.RIGHT_HAND_ORIENTATION_LEFT,false);
