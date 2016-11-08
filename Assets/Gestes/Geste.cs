@@ -4,11 +4,13 @@ using System.Collections.Generic;
 
 /// <summary>
 /// pour la creation de tout nouveaux gestes :
-/// creer la méthode OnStart et y informer le type dans mType
-/// puis ajouter les differents etats avec AddStateToPath
+/// creer la méthode OnStart et y informer le type dans mType 
+/// y ajouter ignoreHandOrientation si on veut ecouter l'orientation de la main
+/// puis ajouter les differents etats avec AddStateToPath (informer si l'est est important ou non avec le booleen)
 /// </summary>
 public abstract class Geste
 {
+    protected bool ignoreHandOrientation = true;
     protected GesteTypes mType;
     private int currentPositionInPath = -1;
     private List<Pair<CurrentState,bool>> statePath = new List<Pair<CurrentState,bool>>();
@@ -25,6 +27,8 @@ public abstract class Geste
 
     void OnStateChange(CurrentState newState)
     {
+        if (newState.GetType().Equals(TypeOfState.HAND_ORIENTATION) && ignoreHandOrientation)
+            return;
         if (newState == statePath[currentPositionInPath + 1].First)
         {
             currentPositionInPath++;
