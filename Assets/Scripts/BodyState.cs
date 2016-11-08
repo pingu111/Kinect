@@ -150,7 +150,7 @@ public class BodyState : MonoBehaviour
 
                 if (previewState != CurrentHandOr)
                 {
-                    Debug.Log("new :" + previewState);
+                   // Debug.Log("new :" + previewState);
                     CurrentHandOr = previewState;
                     EventManager.raise(MyEventTypes.STATE_CHANGED, CurrentHandOr);
                 }
@@ -190,21 +190,27 @@ public class BodyState : MonoBehaviour
 
     bool isLeftHandRunning()
     {
-        return ((leftHand.transform.position.z < leftShoulder.transform.position.z + distanceShoulders * 0.25f) && (Mathf.Abs(leftHand.transform.position.y - leftShoulder.transform.position.y) < 0.5f)) ; 
+        return ((leftHand.transform.position.z < leftShoulder.transform.position.z + distanceShoulders * 0.25f) &&
+            (Mathf.Abs(leftHand.transform.position.y - leftShoulder.transform.position.y) < 0.5f) &&
+             leftHand.transform.position.x > leftShoulder.transform.position.x &&
+             leftHand.transform.position.x < rightShoulder.transform.position.x) ; 
     }
     bool isRightHandRunning()
     {
-        return ((rightHand.transform.position.z < rightShoulder.transform.position.z + distanceShoulders * 0.25f) && (Mathf.Abs(rightHand.transform.position.y - rightShoulder.transform.position.y) < 0.5f));
+        return ((rightHand.transform.position.z < rightShoulder.transform.position.z + distanceShoulders * 0.25f) && 
+            (Mathf.Abs(rightHand.transform.position.y - rightShoulder.transform.position.y) < 0.5f) &&
+            rightHand.transform.position.x > leftShoulder.transform.position.x &&
+            rightHand.transform.position.x < rightShoulder.transform.position.x);
     }
 
 
     bool isLeftHandFront()
     {
-        return (leftHand.transform.position.z < leftShoulder.transform.position.z - distanceShoulders*1.0f);
+        return (leftHand.transform.position.z < leftShoulder.transform.position.z - distanceShoulders*1.5f);
     }
     bool isRightHandFront()
     {
-        return (rightHand.transform.position.z < rightShoulder.transform.position.z - distanceShoulders * 1.0f);
+        return (rightHand.transform.position.z < rightShoulder.transform.position.z - distanceShoulders * 1.5f);
     }
 
 
@@ -262,7 +268,8 @@ public class BodyState : MonoBehaviour
 
     bool areHandClapped()
     {
-        return (Vector3.Distance(rightHand.transform.position, leftHand.transform.position) < 1.0f && Mathf.Abs(rightHand.transform.position.y - rightShoulder.transform.position.y) < 1.5f);
+        return (Vector3.Distance(rightHand.transform.position, leftHand.transform.position) < 1.0f &&
+            Mathf.Abs(rightHand.transform.position.y - rightShoulder.transform.position.y) < 1.0f );
     }
 
     void OnDestroy()
