@@ -50,9 +50,7 @@ public class BodyState : MonoBehaviour
                 _currentStateBody = value;
         }
     }
-    private bool measureHasBeenDone = false;
     private float distanceShoulders = 0;
-    private int nbMeasuresShoulders = 0;
 
     public bool isRightHandMaster = true;
 

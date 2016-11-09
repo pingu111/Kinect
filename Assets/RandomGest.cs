@@ -14,6 +14,8 @@ public class RandomGest : MonoBehaviour {
     private float timeToDetect = 10.0f;
     private float timeActual = 0;
 
+    public Dictionary<GesteTypes, int> dicoNbSuccededGest = new Dictionary<GesteTypes, int>();
+
 	// Use this for initialization
 	void Start ()
     {
@@ -53,6 +55,7 @@ public class RandomGest : MonoBehaviour {
         if (_type == listGestsToDo[idGestActuallyAsked])
         {
             askForNewGeste();
+            dicoNbSuccededGest[_type]++;
         }
         else
         {
@@ -102,12 +105,45 @@ public class RandomGest : MonoBehaviour {
             System.Random random = new System.Random();
             GesteTypes randomValue = (GesteTypes)values.GetValue(random.Next(values.Length));
             if (!listGestsToDo.Contains(randomValue) && randomValue != GesteTypes.CLAP)
+            {
                 listGestsToDo.Add(randomValue);
+                dicoNbSuccededGest.Add(randomValue, 0);
+            }
         }
     }
 
     public void stockerInfos()
     {
+        float globalPercent = 0;
+
+        Dictionary<GesteTypes, float> dicoPercentage = new Dictionary<GesteTypes, float>();
+        foreach(KeyValuePair<GesteTypes, int> p in dicoNbSuccededGest)
+        {
+
+            float percent = 100 * p.Value / nbLoopsToDo;
+
+            globalPercent += percent / dicoNbSuccededGest.Count;
+            dicoPercentage.Add(p.Key, percent);
+        }
+
+        string success = "";
+        success += "Global % : " + globalPercent + "\n";
+        foreach (KeyValuePair<GesteTypes, float> p in dicoPercentage)
+        {
+            success += "Geste : " + p.Key + " / % : " + p.Value + "\n";
+        }
+
+        string id = "ID : " +  new System.Random(Guid.NewGuid().GetHashCode())+"\n";
+
+        Informations userInfo = GameObject.FindObjectOfType<SceneManager>().userInfos;
+
+        string user = "Nom : " + userInfo.nom + "\n";
+        user += "Age : " + userInfo.age + "\n";
+        user += "Taille : " + userInfo.taille + "\n";
+        user += "Main principale droite : " + userInfo.isRightHanded + "\n";
+        user += "Frequence : " + userInfo.frequence + "\n";
+
+        System.IO.File.WriteAllText(userInfo.nom+ id+".txt", id+user+success);
 
 
         //  L’utilisateur peut revenir au menu par le même geste explicite que dans le mode libre.
