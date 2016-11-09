@@ -81,6 +81,11 @@ public abstract class Geste
     {
         EventManager.removeActionFromEvent<CurrentState>(MyEventTypes.STATE_CHANGED, OnStateChange);
     }
+
+    public void reset()
+    {
+        currentPositionInPath = -1;
+    }
 }
 
 
