@@ -6,22 +6,22 @@ using System.Collections.Generic;
 
 public class RandomGest : MonoBehaviour {
 
-    public int idGestActuallyAsked;
     private int numberLoop = 0;
     private int nbLoopsToDo = 2;
 
-    public List<GesteTypes> listGestsToDo = new List<GesteTypes>();
+    public List<Pair< GesteTypes, GesteTypes>> listGestsToDoAndDetected = new List<Pair<GesteTypes, GesteTypes>>();
 
     /// <summary>
     /// listGesteDetected[nbloop][idgeste]
     /// </summary>
-    public List<List<GesteTypes>> listGesteDetected = new List<List<GesteTypes>>();
 
     private float timeToDetect = 10.0f;
     private float timeActual = 0;
 
     private float timeToBegin = 3.0f;
     private float timeActualBegin = 0;
+
+    private int actualIndex = 0;
 
     public Dictionary<GesteTypes, int> dicoNbSuccededGest = new Dictionary<GesteTypes, int>();
 
@@ -30,14 +30,9 @@ public class RandomGest : MonoBehaviour {
 	// Use this for initialization
 	void Start ()
     {
-        listGesteDetected = new List<List<GesteTypes>>();
-        for (int i = 0; i < nbLoopsToDo; i++)
-            listGesteDetected.Add(new List<GesteTypes>());
-
-        idGestActuallyAsked = 0;
         createListRandomGeste();
         EventManager.addActionToEvent<GesteTypes>(MyEventTypes.GESTE_DETECTED, gesteDetected);
-        askForGest(idGestActuallyAsked);
+        askForGest();
     }
 
     void Update()
@@ -48,8 +43,9 @@ public class RandomGest : MonoBehaviour {
             timeActual += Time.deltaTime;
             if (timeActual > timeToDetect && numberLoop < nbLoopsToDo)
             {
-                listGesteDetected[numberLoop].Add(GesteTypes.NO_GESTES_TIMER);
+                listGestsToDoAndDetected[actualIndex].Second = (GesteTypes.NO_GESTES_TIMER);
                 askForNewGeste();
+                actualIndex++;
             }
             else
                 sprite.transform.localScale = new Vector3(Mathf.Max((1 - timeActual / timeToDetect), 0), sprite.transform.localScale.y, 1);
@@ -63,42 +59,41 @@ public class RandomGest : MonoBehaviour {
     void askForNewGeste()
     {
         timeActual = 0;
-        idGestActuallyAsked++;
-        if (idGestActuallyAsked == listGestsToDo.Count)
+        if (actualIndex == listGestsToDoAndDetected.Count)
         {
-            numberLoop++;
-            idGestActuallyAsked = 0;
             if (numberLoop >= nbLoopsToDo)
             {
                 EventManager.removeActionFromEvent<GesteTypes>(MyEventTypes.GESTE_DETECTED, gesteDetected);
                 stockerInfos();
             }
         }
-        askForGest(idGestActuallyAsked);
+        askForGest();
     }
 
     void gesteDetected(GesteTypes _type)
     {
         if (timeActualBegin > timeToBegin)
         {
-            listGesteDetected[numberLoop].Add(_type);
-
-            if (_type == listGestsToDo[idGestActuallyAsked])
+            listGestsToDoAndDetected[actualIndex].Second = _type;
+            if (_type == listGestsToDoAndDetected[actualIndex].First)
             {
                 askForNewGeste();
+                actualIndex++;
+
                 dicoNbSuccededGest[_type]++;
             }
             else if (timeActual > 1.0f)
             {
-                Debug.Log("Mauvais geste " + _type + " au lieu de " + listGestsToDo[idGestActuallyAsked]);
+                Debug.Log("Mauvais geste " + _type + " au lieu de " + listGestsToDoAndDetected[actualIndex].First);
                 askForNewGeste();
+                actualIndex++;
             }
         }
     }
 
-    void askForGest(int id)
+    void askForGest()
     {
-        GesteTypes newGeste = listGestsToDo[id];
+        GesteTypes newGeste = listGestsToDoAndDetected[actualIndex].First;
         string newText = "";
 
         switch (newGeste)
@@ -130,18 +125,31 @@ public class RandomGest : MonoBehaviour {
 
     private void createListRandomGeste()
     {
-        Array values = Enum.GetValues(typeof(GesteTypes));
 
-        // remove of the clap
-        while(values.Length - 2 != listGestsToDo.Count)
+        for (int i = 0; i < nbLoopsToDo; i ++)
         {
-            System.Random random = new System.Random();
-            GesteTypes randomValue = (GesteTypes)values.GetValue(random.Next(values.Length));
-            if (!listGestsToDo.Contains(randomValue) && randomValue != GesteTypes.CLAP && randomValue != GesteTypes.NO_GESTES_TIMER)
+            List<GesteTypes> listGestsToDo = new List<GesteTypes>();
+            Array values = Enum.GetValues(typeof(GesteTypes));
+
+            // remove of the clap
+            while (values.Length - 2 != listGestsToDo.Count)
             {
-                listGestsToDo.Add(randomValue);
-                dicoNbSuccededGest.Add(randomValue, 0);
+                System.Random random = new System.Random();
+                GesteTypes randomValue = (GesteTypes)values.GetValue(random.Next(values.Length));
+                if (!listGestsToDo.Contains(randomValue) && randomValue != GesteTypes.CLAP && randomValue != GesteTypes.NO_GESTES_TIMER)
+                {
+                    listGestsToDo.Add(randomValue);
+                }
             }
+
+            foreach (GesteTypes g in listGestsToDo)
+                listGestsToDoAndDetected.Add(new Pair<GesteTypes, GesteTypes>(g, GesteTypes.NO_GESTES_TIMER));
+        }
+
+        foreach(GesteTypes values in Enum.GetValues(typeof(GesteTypes)))
+        {
+            if (values != GesteTypes.CLAP && values != GesteTypes.NO_GESTES_TIMER)
+                dicoNbSuccededGest.Add(values, 0);
         }
     }
 
@@ -178,15 +186,9 @@ public class RandomGest : MonoBehaviour {
         user += "Frequence : " + userInfo.frequence + "\n";
 
         string gestsDetected ="";
-        for(int nbLoop = 0; nbLoop < listGesteDetected.Count; nbLoop++)
+        foreach(Pair<GesteTypes, GesteTypes> p in  listGestsToDoAndDetected)
         {
-            for (int j = 0; j < listGesteDetected[nbLoop].Count; j++)
-            {
-
-                Debug.Log(listGesteDetected[nbLoop].Count + " " + nbLoop + " " + j + " " + listGestsToDo.Count);
-                gestsDetected += listGesteDetected[nbLoop][j] + " pour " + listGestsToDo[j]+"\n";
-            }
-
+            gestsDetected += p.First + " pour " + p.Second + "\n";
         }
 
         string total = id + user + success + gestsDetected;

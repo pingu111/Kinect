@@ -69,6 +69,12 @@ public class BodyState : MonoBehaviour
             isRightHandMaster = FindObjectOfType<GetInformationsScript>().userInfos.isRightHanded;
     }
 
+    void resetGests()
+    {
+        foreach(Geste g in listGestes)
+            g.
+    }
+
 	// Update is called once per frame
 	void Update ()
     {
@@ -123,7 +129,7 @@ public class BodyState : MonoBehaviour
 
                 if (previewState != CurrentStateBody)
                 {
-                    Debug.Log("new :"+previewState+" "+Time.time +" "+ nbGest);
+                   // Debug.Log("new :"+previewState+" "+Time.time +" "+ nbGest);
                     nbGest++;
                     CurrentStateBody = previewState;
                     EventManager.raise(MyEventTypes.STATE_CHANGED, CurrentStateBody);
