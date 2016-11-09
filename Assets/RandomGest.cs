@@ -9,7 +9,11 @@ public class RandomGest : MonoBehaviour {
     public int idGestActuallyAsked;
     private int numberLoop = 0;
     private int nbLoopsToDo = 6;
+
     public List<GesteTypes> listGestsToDo = new List<GesteTypes>();
+
+
+    public List<List<GesteTypes>> listGesteDetected = new List<List<GesteTypes>>();
 
     private float timeToDetect = 10.0f;
     private float timeActual = 0;
@@ -19,6 +23,10 @@ public class RandomGest : MonoBehaviour {
 	// Use this for initialization
 	void Start ()
     {
+        listGesteDetected = new List<List<GesteTypes>>();
+        for (int i = 0; i < nbLoopsToDo; i++)
+            listGesteDetected.Add(new List<GesteTypes>());
+
         idGestActuallyAsked = 0;
         createListRandomGeste();
         EventManager.addActionToEvent<GesteTypes>(MyEventTypes.GESTE_DETECTED, gesteDetected);
@@ -30,6 +38,7 @@ public class RandomGest : MonoBehaviour {
         timeActual += Time.deltaTime;
         if(timeActual > timeToDetect)
         {
+            listGesteDetected[numberLoop].Add(GesteTypes.NO_GESTES_TIMER);
             askForNewGeste();
         }
     }
@@ -52,6 +61,8 @@ public class RandomGest : MonoBehaviour {
 
     void gesteDetected(GesteTypes _type)
     {
+        listGesteDetected[numberLoop].Add(_type);
+
         if (_type == listGestsToDo[idGestActuallyAsked])
         {
             askForNewGeste();
@@ -100,11 +111,11 @@ public class RandomGest : MonoBehaviour {
         Array values = Enum.GetValues(typeof(GesteTypes));
 
         // remove of the clap
-        while(values.Length - 1 != listGestsToDo.Count)
+        while(values.Length - 2 != listGestsToDo.Count)
         {
             System.Random random = new System.Random();
             GesteTypes randomValue = (GesteTypes)values.GetValue(random.Next(values.Length));
-            if (!listGestsToDo.Contains(randomValue) && randomValue != GesteTypes.CLAP)
+            if (!listGestsToDo.Contains(randomValue) && randomValue != GesteTypes.CLAP && randomValue != GesteTypes.NO_GESTES_TIMER)
             {
                 listGestsToDo.Add(randomValue);
                 dicoNbSuccededGest.Add(randomValue, 0);
@@ -143,7 +154,17 @@ public class RandomGest : MonoBehaviour {
         user += "Main principale droite : " + userInfo.isRightHanded + "\n";
         user += "Frequence : " + userInfo.frequence + "\n";
 
-        System.IO.File.WriteAllText(userInfo.nom+ id+".txt", id+user+success);
+        string gestsDetected ="";
+        for(int i = 0; i < listGesteDetected.Count; i ++)
+        {
+            for (int j = 0; j < listGesteDetected[i].Count; j++)
+            {
+                gestsDetected += listGesteDetected[i][j] + " pour " + listGestsToDo[i]+"\n";
+            }
+
+        }
+
+        System.IO.File.WriteAllText(userInfo.nom + id + ".txt", id + user + success + gestsDetected);
 
 
         //  L’utilisateur peut revenir au menu par le même geste explicite que dans le mode libre.

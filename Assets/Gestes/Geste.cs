@@ -93,5 +93,6 @@ public enum GesteTypes
     SWIPE_LEFT_WITH_RIGHT_HAND,
     SWIPE_RIGHT_WITH_RIGHT_HAND,
     RUN,
-    HI
+    HI,
+    NO_GESTES_TIMER
 }
