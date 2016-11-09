@@ -15,7 +15,7 @@ public class RandomGest : MonoBehaviour {
 
     public List<List<GesteTypes>> listGesteDetected = new List<List<GesteTypes>>();
 
-    private float timeToDetect = 10.0f;
+    private float timeToDetect = 0.01f;
     private float timeActual = 0;
 
     public Dictionary<GesteTypes, int> dicoNbSuccededGest = new Dictionary<GesteTypes, int>();
@@ -36,7 +36,7 @@ public class RandomGest : MonoBehaviour {
     void Update()
     {
         timeActual += Time.deltaTime;
-        if(timeActual > timeToDetect)
+        if(timeActual > timeToDetect && numberLoop < nbLoopsToDo)
         {
             listGesteDetected[numberLoop].Add(GesteTypes.NO_GESTES_TIMER);
             askForNewGeste();
@@ -51,7 +51,7 @@ public class RandomGest : MonoBehaviour {
         {
             numberLoop++;
             idGestActuallyAsked = 0;
-            if (numberLoop > nbLoopsToDo)
+            if (numberLoop >= nbLoopsToDo)
             {
                 stockerInfos();
             }
@@ -130,7 +130,6 @@ public class RandomGest : MonoBehaviour {
         Dictionary<GesteTypes, float> dicoPercentage = new Dictionary<GesteTypes, float>();
         foreach(KeyValuePair<GesteTypes, int> p in dicoNbSuccededGest)
         {
-
             float percent = 100 * p.Value / nbLoopsToDo;
 
             globalPercent += percent / dicoNbSuccededGest.Count;
@@ -144,7 +143,9 @@ public class RandomGest : MonoBehaviour {
             success += "Geste : " + p.Key + " / % : " + p.Value + "\n";
         }
 
-        string id = "ID : " +  new System.Random(Guid.NewGuid().GetHashCode())+"\n";
+        System.Random r = new System.Random();
+        int randomNumber = r.Next(1, 999999999);
+        string id = "ID : " + randomNumber + "\n";
 
         Informations userInfo = GameObject.FindObjectOfType<SceneManager>().userInfos;
 
@@ -164,7 +165,10 @@ public class RandomGest : MonoBehaviour {
 
         }
 
-        System.IO.File.WriteAllText(userInfo.nom + id + ".txt", id + user + success + gestsDetected);
+        string total = id + user + success + gestsDetected;
+        string name = (userInfo.nom + randomNumber) +".txt";
+        Debug.Log(total);
+        System.IO.File.WriteAllText(name, total);
 
 
         //  L’utilisateur peut revenir au menu par le même geste explicite que dans le mode libre.
