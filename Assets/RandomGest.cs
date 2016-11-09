@@ -8,17 +8,24 @@ public class RandomGest : MonoBehaviour {
 
     public int idGestActuallyAsked;
     private int numberLoop = 0;
-    private int nbLoopsToDo = 6;
+    private int nbLoopsToDo = 2;
 
     public List<GesteTypes> listGestsToDo = new List<GesteTypes>();
 
-
+    /// <summary>
+    /// listGesteDetected[nbloop][idgeste]
+    /// </summary>
     public List<List<GesteTypes>> listGesteDetected = new List<List<GesteTypes>>();
 
-    private float timeToDetect = 0.01f;
+    private float timeToDetect = 10.0f;
     private float timeActual = 0;
 
+    private float timeToBegin = 3.0f;
+    private float timeActualBegin = 0;
+
     public Dictionary<GesteTypes, int> dicoNbSuccededGest = new Dictionary<GesteTypes, int>();
+
+    public GameObject sprite;
 
 	// Use this for initialization
 	void Start ()
@@ -35,11 +42,21 @@ public class RandomGest : MonoBehaviour {
 
     void Update()
     {
-        timeActual += Time.deltaTime;
-        if(timeActual > timeToDetect && numberLoop < nbLoopsToDo)
+        timeActualBegin += Time.deltaTime;
+        if(timeActualBegin > timeToBegin)
         {
-            listGesteDetected[numberLoop].Add(GesteTypes.NO_GESTES_TIMER);
-            askForNewGeste();
+            timeActual += Time.deltaTime;
+            if (timeActual > timeToDetect && numberLoop < nbLoopsToDo)
+            {
+                listGesteDetected[numberLoop].Add(GesteTypes.NO_GESTES_TIMER);
+                askForNewGeste();
+            }
+            else
+                sprite.transform.localScale = new Vector3(Mathf.Max((1 - timeActual / timeToDetect), 0), sprite.transform.localScale.y, 1);
+        }
+        else
+        {
+            this.gameObject.GetComponent<Text>().text = "Preparez vous !";
         }
     }
 
@@ -53,6 +70,7 @@ public class RandomGest : MonoBehaviour {
             idGestActuallyAsked = 0;
             if (numberLoop >= nbLoopsToDo)
             {
+                EventManager.removeActionFromEvent<GesteTypes>(MyEventTypes.GESTE_DETECTED, gesteDetected);
                 stockerInfos();
             }
         }
@@ -61,16 +79,20 @@ public class RandomGest : MonoBehaviour {
 
     void gesteDetected(GesteTypes _type)
     {
-        listGesteDetected[numberLoop].Add(_type);
+        if (timeActualBegin > timeToBegin)
+        {
+            listGesteDetected[numberLoop].Add(_type);
 
-        if (_type == listGestsToDo[idGestActuallyAsked])
-        {
-            askForNewGeste();
-            dicoNbSuccededGest[_type]++;
-        }
-        else
-        {
-            Debug.Log("Mauvais geste " + _type + " au lieu de " + listGestsToDo[idGestActuallyAsked]);
+            if (_type == listGestsToDo[idGestActuallyAsked])
+            {
+                askForNewGeste();
+                dicoNbSuccededGest[_type]++;
+            }
+            else if (timeActual > 1.0f)
+            {
+                Debug.Log("Mauvais geste " + _type + " au lieu de " + listGestsToDo[idGestActuallyAsked]);
+                askForNewGeste();
+            }
         }
     }
 
@@ -94,10 +116,10 @@ public class RandomGest : MonoBehaviour {
                 newText = "Main droite devant vous";
                 break;
             case GesteTypes.SWIPE_LEFT_WITH_RIGHT_HAND:
-                newText = "Baffe de la main droite vers la gauche ";
+                newText = "Main droite vers la gauche ";
                 break;
             case GesteTypes.SWIPE_RIGHT_WITH_RIGHT_HAND:
-                newText = "Baffe de la main droite vers la droite ";
+                newText = "Main droite vers la droite ";
                 break;
             default:
                 break;
@@ -156,11 +178,13 @@ public class RandomGest : MonoBehaviour {
         user += "Frequence : " + userInfo.frequence + "\n";
 
         string gestsDetected ="";
-        for(int i = 0; i < listGesteDetected.Count; i ++)
+        for(int nbLoop = 0; nbLoop < listGesteDetected.Count; nbLoop++)
         {
-            for (int j = 0; j < listGesteDetected[i].Count; j++)
+            for (int j = 0; j < listGesteDetected[nbLoop].Count; j++)
             {
-                gestsDetected += listGesteDetected[i][j] + " pour " + listGestsToDo[i]+"\n";
+
+                Debug.Log(listGesteDetected[nbLoop].Count + " " + nbLoop + " " + j + " " + listGestsToDo.Count);
+                gestsDetected += listGesteDetected[nbLoop][j] + " pour " + listGestsToDo[j]+"\n";
             }
 
         }
@@ -179,5 +203,11 @@ public class RandomGest : MonoBehaviour {
     {
         if(type == GesteTypes.CLAP)
             EventManager.raise<ScenesType>(MyEventTypes.CHANGE_SCENE, ScenesType.MAIN_MENU);
+    }
+
+    void OnDestroy()
+    {
+        EventManager.removeActionFromEvent<GesteTypes>(MyEventTypes.GESTE_DETECTED, clapToQuit);
+
     }
 }

@@ -36,11 +36,14 @@ public static class EventManager
     /// <param name="method">The method</param>
     public static void addActionToEvent(MyEventTypes even, Callback method)
     {
-        if (!dicoEventAction.ContainsKey(even))
+        lock (dicoEventAction)
         {
-            dicoEventAction.Add(even, new List<Delegate>());
+            if (!dicoEventAction.ContainsKey(even))
+            {
+                dicoEventAction.Add(even, new List<Delegate>());
+            }
+            dicoEventAction[even].Add(method);
         }
-        dicoEventAction[even].Add(method);
     }
 
     /// <summary>
@@ -50,11 +53,14 @@ public static class EventManager
     /// <param name="method">The method</param>
     public static void addActionToEvent<T>(MyEventTypes even, Callback<T> method)
     {
-        if (!dicoEventAction.ContainsKey(even))
+        lock (dicoEventAction)
         {
-            dicoEventAction.Add(even, new List<Delegate>());
+            if (!dicoEventAction.ContainsKey(even))
+            {
+                dicoEventAction.Add(even, new List<Delegate>());
+            }
+            dicoEventAction[even].Add(method);
         }
-        dicoEventAction[even].Add(method);
     }
 
     /// <summary>c
@@ -64,9 +70,12 @@ public static class EventManager
     /// <param name="method">The method to unsubscribe</param>
     public static void removeActionFromEvent(MyEventTypes even, Callback method)
     {
-        if (dicoEventAction.ContainsKey(even))
+        lock (dicoEventAction)
         {
-            dicoEventAction[even].Remove(method);
+            if (dicoEventAction.ContainsKey(even))
+            {
+                dicoEventAction[even].Remove(method);
+            }
         }
     }
 
@@ -77,9 +86,12 @@ public static class EventManager
     /// <param name="method">The method to unsubscribe</param>
     public static void removeActionFromEvent<T>(MyEventTypes even, Callback<T> method)
     {
-        if (dicoEventAction.ContainsKey(even))
+        lock (dicoEventAction)
         {
-            dicoEventAction[even].Remove(method);
+            if (dicoEventAction.ContainsKey(even))
+            {
+                dicoEventAction[even].Remove(method);
+            }
         }
     }
 
@@ -89,17 +101,21 @@ public static class EventManager
     /// <param name="eventToCall">The event to raise</param>
     public static void raise(MyEventTypes eventToCall)
     {
-        if(!dicoEventAction.ContainsKey(eventToCall))
+        lock(dicoEventAction)
         {
-            Debug.LogError("Event "+ eventToCall+" is not watched but is raised");
-            return;
-        }
 
-        foreach (Delegate d in dicoEventAction[eventToCall])
-        {
-            Callback c = (Callback)d;
-            if (c != null)
-                c();
+            if (!dicoEventAction.ContainsKey(eventToCall))
+            {
+                Debug.LogError("Event " + eventToCall + " is not watched but is raised");
+                return;
+            }
+
+            foreach (Delegate d in dicoEventAction[eventToCall].ToArray())
+            {
+                Callback c = (Callback)d;
+                if (c != null)
+                    c();
+            }
         }
     }
 
@@ -111,16 +127,19 @@ public static class EventManager
 
     public static void raise<T>(MyEventTypes eventToCall, T arg)
     {
-        if (!dicoEventAction.ContainsKey(eventToCall))
+        lock (dicoEventAction)
         {
-            Debug.LogError("Event " + eventToCall + " is not watched but is raised");
-            return;
-        }
-        foreach (Delegate d in dicoEventAction[eventToCall])
-        {
-            Callback<T> c = (Callback<T>)d;
-            if (c != null)
-                c(arg);
+            if (!dicoEventAction.ContainsKey(eventToCall))
+            {
+                Debug.LogError("Event " + eventToCall + " is not watched but is raised");
+                return;
+            }
+            foreach (Delegate d in dicoEventAction[eventToCall].ToArray())
+            {
+                Callback<T> c = (Callback<T>)d;
+                if (c != null)
+                    c(arg);
+            }
         }
     }
 }

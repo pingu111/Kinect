@@ -36,7 +36,8 @@ public class GesteText : MonoBehaviour {
                 newText = "Baffe vers la droite ";
                 break;
             case GesteTypes.CLAP:
-                EventManager.raise<ScenesType>(MyEventTypes.CHANGE_SCENE, ScenesType.MAIN_MENU);
+                if(FindObjectsOfType<RandomGest>().Length == 0)
+                    EventManager.raise<ScenesType>(MyEventTypes.CHANGE_SCENE, ScenesType.MAIN_MENU);
                 break;
             default:
                 break;

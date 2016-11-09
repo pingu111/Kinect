@@ -12,7 +12,7 @@ public class Clap : Geste
     protected override void OnStart()
     {
         mType = GesteTypes.CLAP;
-        AddStateToPath(CurrentState.IDLE_BODY, false);
+        AddStateToPath(CurrentState.IDLE_BODY);
         AddStateToPath(CurrentState.CLAP_HAND);
     }
 }
