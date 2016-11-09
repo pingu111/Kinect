@@ -65,7 +65,7 @@ public abstract class Geste
 
     private void GesteDetected()
     {
-        Debug.Log("/************ RAISE " + mType+" ***********/ "+Time.time);
+      //  Debug.Log("/************ RAISE " + mType+" ***********/ "+Time.time);
         EventManager.raise<GesteTypes>(MyEventTypes.GESTE_DETECTED, mType);
     }
 

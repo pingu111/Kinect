@@ -67,12 +67,14 @@ public class BodyState : MonoBehaviour
 
         if (FindObjectsOfType<GetInformationsScript>().Length > 0)
             isRightHandMaster = FindObjectOfType<GetInformationsScript>().userInfos.isRightHanded;
+
+        EventManager.addActionToEvent(MyEventTypes.RESET_GESTES, resetGests);
     }
 
     void resetGests()
     {
-        foreach(Geste g in listGestes)
-            g.
+        foreach (Geste g in listGestes)
+            g.reset();
     }
 
 	// Update is called once per frame
@@ -282,6 +284,9 @@ public class BodyState : MonoBehaviour
         {
             g.OnDestroy();
         }
+        EventManager.removeActionFromEvent(MyEventTypes.RESET_GESTES, resetGests);
+
+
     }
 }
 

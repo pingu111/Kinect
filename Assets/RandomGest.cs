@@ -4,10 +4,10 @@ using System;
 using UnityEngine.UI;
 using System.Collections.Generic;
 
-public class RandomGest : MonoBehaviour {
+public class RandomGest : MonoBehaviour
+{
 
-    private int numberLoop = 0;
-    private int nbLoopsToDo = 2;
+    private int nbLoopsToDo = 6;
 
     public List<Pair< GesteTypes, GesteTypes>> listGestsToDoAndDetected = new List<Pair<GesteTypes, GesteTypes>>();
 
@@ -21,7 +21,7 @@ public class RandomGest : MonoBehaviour {
     private float timeToBegin = 3.0f;
     private float timeActualBegin = 0;
 
-    private int actualIndex = 0;
+    private int actualIndex = -1;
 
     public Dictionary<GesteTypes, int> dicoNbSuccededGest = new Dictionary<GesteTypes, int>();
 
@@ -31,43 +31,49 @@ public class RandomGest : MonoBehaviour {
 	void Start ()
     {
         createListRandomGeste();
-        EventManager.addActionToEvent<GesteTypes>(MyEventTypes.GESTE_DETECTED, gesteDetected);
-        askForGest();
     }
 
     void Update()
     {
-        timeActualBegin += Time.deltaTime;
         if(timeActualBegin > timeToBegin)
         {
-            timeActual += Time.deltaTime;
-            if (timeActual > timeToDetect && numberLoop < nbLoopsToDo)
+            if (actualIndex == -1)
             {
-                listGestsToDoAndDetected[actualIndex].Second = (GesteTypes.NO_GESTES_TIMER);
+                EventManager.addActionToEvent<GesteTypes>(MyEventTypes.GESTE_DETECTED, gesteDetected);
                 askForNewGeste();
-                actualIndex++;
             }
             else
-                sprite.transform.localScale = new Vector3(Mathf.Max((1 - timeActual / timeToDetect), 0), sprite.transform.localScale.y, 1);
+            {
+                timeActual += Time.deltaTime;
+                if (timeActual > timeToDetect && actualIndex < listGestsToDoAndDetected.Count)
+                {
+                    listGestsToDoAndDetected[actualIndex].Second = (GesteTypes.NO_GESTES_TIMER);
+                   // Debug.Log("Timer out " + listGestsToDoAndDetected[actualIndex].First);
+                    askForNewGeste();
+                }
+                else
+                    sprite.transform.localScale = new Vector3(Mathf.Max((1 - timeActual / timeToDetect), 0), sprite.transform.localScale.y, 1);
+            }
         }
         else
         {
+            timeActualBegin += Time.deltaTime;
             this.gameObject.GetComponent<Text>().text = "Preparez vous !";
         }
     }
 
     void askForNewGeste()
     {
+        actualIndex++;
+
         timeActual = 0;
-        if (actualIndex == listGestsToDoAndDetected.Count)
+        if (actualIndex == listGestsToDoAndDetected.Count )
         {
-            if (numberLoop >= nbLoopsToDo)
-            {
-                EventManager.removeActionFromEvent<GesteTypes>(MyEventTypes.GESTE_DETECTED, gesteDetected);
-                stockerInfos();
-            }
+            EventManager.removeActionFromEvent<GesteTypes>(MyEventTypes.GESTE_DETECTED, gesteDetected);
+            stockerInfos();
         }
-        askForGest();
+        else 
+            askForGest();
     }
 
     void gesteDetected(GesteTypes _type)
@@ -78,16 +84,15 @@ public class RandomGest : MonoBehaviour {
             if (_type == listGestsToDoAndDetected[actualIndex].First)
             {
                 askForNewGeste();
-                actualIndex++;
-
                 dicoNbSuccededGest[_type]++;
             }
             else if (timeActual > 1.0f)
             {
-                Debug.Log("Mauvais geste " + _type + " au lieu de " + listGestsToDoAndDetected[actualIndex].First);
+                //Debug.Log("Mauvais geste " + _type + " au lieu de " + listGestsToDoAndDetected[actualIndex].First);
                 askForNewGeste();
-                actualIndex++;
             }
+
+            EventManager.raise(MyEventTypes.RESET_GESTES);
         }
     }
 
@@ -143,7 +148,9 @@ public class RandomGest : MonoBehaviour {
             }
 
             foreach (GesteTypes g in listGestsToDo)
+            {
                 listGestsToDoAndDetected.Add(new Pair<GesteTypes, GesteTypes>(g, GesteTypes.NO_GESTES_TIMER));
+            }
         }
 
         foreach(GesteTypes values in Enum.GetValues(typeof(GesteTypes)))
@@ -155,6 +162,8 @@ public class RandomGest : MonoBehaviour {
 
     public void stockerInfos()
     {
+        this.gameObject.GetComponent<Text>().text = "Merci ! Clapez pour quitter !";
+
         float globalPercent = 0;
 
         Dictionary<GesteTypes, float> dicoPercentage = new Dictionary<GesteTypes, float>();
@@ -188,13 +197,13 @@ public class RandomGest : MonoBehaviour {
         string gestsDetected ="";
         foreach(Pair<GesteTypes, GesteTypes> p in  listGestsToDoAndDetected)
         {
-            gestsDetected += p.First + " pour " + p.Second + "\n";
+            gestsDetected += p.Second + " pour " + p.First + "\n";
         }
 
         string total = id + user + success + gestsDetected;
         string name = (userInfo.nom + randomNumber) +".txt";
         Debug.Log(total);
-        System.IO.File.WriteAllText(name, total);
+        System.IO.File.WriteAllText(name.Replace(" ", "" ), total);
 
 
         //  L’utilisateur peut revenir au menu par le même geste explicite que dans le mode libre.

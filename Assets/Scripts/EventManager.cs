@@ -11,6 +11,7 @@ public enum MyEventTypes
     GESTE_DETECTED,
     LAUNCH_INFOS,
     CHANGE_SCENE,
+    RESET_GESTES,
     GET_INFORMATIONS
 }
 
